@@ -4,6 +4,7 @@
 3 different user types, customer, clerk, and manager.
 
 Account information:
+```
 Username: user1
 Password: pass1
 Type: customer
@@ -15,3 +16,4 @@ Type: clerk
 Username: manager1
 Password: pass1
 Type: manager
+```
