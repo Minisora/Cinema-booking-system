@@ -332,10 +332,32 @@ namespace Assignment2
             }
 
             Console.WriteLine("Please choose a film to create a showing:");
-
-            for (int i=0; i<list.Count; i++)
+            int count = list.Count;
+            for (int i=0; i<count; i++)
             {
                 Console.WriteLine(i+1 + ". " + list[i].title);
+            }
+
+            int selection;
+            Boolean parse, loop = true;
+            parse = int.TryParse(Console.ReadLine(), out selection);
+
+            while(loop)
+            {
+                if (parse == false || selection > count || selection < 1)
+                {
+                    Console.WriteLine("Please enter a valid choice:");
+                    parse = int.TryParse(Console.ReadLine(), out selection);
+                }
+                else
+                {
+                    loop = false;
+                    Console.WriteLine("You have chosen a film with the following details:");
+                    Console.WriteLine("Title: " + list[selection-1].title);
+                    Console.WriteLine("Age rating: " + list[selection-1].ageRating);
+                    Console.WriteLine("Duration: " + list[selection-1].duration + " minutes");
+                    Console.WriteLine("Short description: " + list[selection-1].trailer);
+                }
             }
 
             managerMain();
@@ -350,6 +372,7 @@ namespace Assignment2
                 password = "pass1"
             };
             SetResponse response = client.Set("users/user1", user);
+            //response.Body contains the json string
         }
 
         public static void getUser(String username)
