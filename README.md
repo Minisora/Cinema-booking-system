@@ -5,8 +5,8 @@
 
 Account information:
 ```
-Username: user1
-Password: pass1
+Username: user1 | user2 | user3
+Password: pass1 | pass2 | pass3
 Type: customer
 
 Username: clerk1
