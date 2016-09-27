@@ -56,9 +56,9 @@ namespace Assignment2
 
             do
             {
-                FirebaseResponse response = client.Get("users/" + username);
+                String response = getData("users/" + username);
 
-                if (response.Body == "null")
+                if (response == "null")
                 {
                     Console.WriteLine("No such user exists.");
                     Console.WriteLine("Please re-enter an existing username:");
@@ -67,7 +67,7 @@ namespace Assignment2
                 else
                 {
                     usernameLoop = false;
-                    user = JsonConvert.DeserializeObject<User>(response.Body);
+                    user = JsonConvert.DeserializeObject<User>(response);
 
                     Console.WriteLine("Please enter your password:");
                     password = Console.ReadLine();
@@ -216,9 +216,9 @@ namespace Assignment2
 
             do
             {
-                FirebaseResponse response = client.Get("films/" + title);
+                String response = getData("films/" + title);
 
-                if (response.Body != "null")
+                if (response != "null")
                 {
                     Console.WriteLine("A film with the title " + title + " already exists.");
                     Console.WriteLine("Please enter a new film title:");
@@ -258,7 +258,7 @@ namespace Assignment2
                         trailer = trailer
                     };
 
-                    PushResponse response2 = client.Push("films/", film);
+                    setData("films/", film);
 
                     Console.WriteLine("The new film " + title + " has been successfully added.");
                 }
@@ -272,47 +272,57 @@ namespace Assignment2
         {
             Boolean ScreenLoop = true;
             Console.WriteLine("\nEnter the new screen number:");
-            String screenNum = Console.ReadLine();
+            int screenNum;
+            Boolean parse; 
+            parse = int.TryParse(Console.ReadLine(), out screenNum);
 
             do
             {
-                FirebaseResponse response = client.Get("screens/" + screenNum);
-
-                if (response.Body != "null")
+                if (screenNum < 1 || parse == false)
                 {
-                    Console.WriteLine("A screen with the screen number " + screenNum + " already exists.");
-                    Console.WriteLine("Please enter a new screen number:");
-                    screenNum = Console.ReadLine();
+                    Console.WriteLine("Please enter a valid screen number:");
+                    parse = int.TryParse(Console.ReadLine(), out screenNum);
                 }
                 else
                 {
-                    ScreenLoop = false;
-                    Console.WriteLine("Please enter the capacity of the new screen:");
-                    int capacity;
-                    Boolean parse, capacityLoop = true;
-                    parse = int.TryParse(Console.ReadLine(), out capacity);
+                    String response = getData("screens/" + screenNum);
 
-                    while (capacityLoop)
+                    if (response != "null")
                     {
-                        if (parse == false)
+                        Console.WriteLine("A screen with the screen number " + screenNum + " already exists.");
+                        Console.WriteLine("Please enter a new screen number:");
+                        parse = int.TryParse(Console.ReadLine(), out screenNum);
+                    }
+                    else
+                    {
+                        ScreenLoop = false;
+                        Console.WriteLine("Please enter the capacity of the new screen:");
+                        int capacity;
+                        Boolean parse2, capacityLoop = true;
+                        parse2 = int.TryParse(Console.ReadLine(), out capacity);
+
+                        while (capacityLoop)
                         {
-                            Console.WriteLine("Please enter a valid number:");
-                            parse = int.TryParse(Console.ReadLine(), out capacity);
-                        }
-                        else
-                        {
-                            capacityLoop = false;
-                            var screen = new Screen
+                            if (parse2 == false || capacity < 1)
                             {
-                                screenNum = screenNum,
-                                capacity = capacity
-                            };
+                                Console.WriteLine("Please enter a valid number:");
+                                parse2 = int.TryParse(Console.ReadLine(), out capacity);
+                            }
+                            else
+                            {
+                                capacityLoop = false;
+                                var screen = new Screen
+                                {
+                                    screenNum = screenNum,
+                                    capacity = capacity
+                                };
 
-                            SetResponse response2 = client.Set("screens/" + screenNum, screen);
+                                setData("screens/" + screenNum, screen);
 
-                            Console.WriteLine("Screen " + screenNum + " with a capacity of " + capacity + " has been successfully added.");
+                                Console.WriteLine("Screen " + screenNum + " with a capacity of " + capacity + " has been successfully added.");
+                            }
                         }
-                    }               
+                    }
                 }
             }
             while (ScreenLoop);
@@ -322,9 +332,9 @@ namespace Assignment2
 
         public static void addShowing()
         {
-            FirebaseResponse films = client.Get("films");
+            String films = getData("films");
 
-            dynamic data = JsonConvert.DeserializeObject<dynamic>(films.Body);
+            dynamic data = JsonConvert.DeserializeObject<dynamic>(films);
             var list = new List<Film>();
             foreach (var itemDynamic in data)
             {
@@ -363,23 +373,16 @@ namespace Assignment2
             managerMain();
         }
 
-        // For reference on how to make API calls to Firebase
-        public static void connect()
+        public static String getData(String path)
         {
-            var user = new User
-            {
-                username = "user1",
-                password = "pass1"
-            };
-            SetResponse response = client.Set("users/user1", user);
-            //response.Body contains the json string
+            FirebaseResponse response = client.Get(path);
+
+            return response.Body;
         }
 
-        public static void getUser(String username)
+        public static void setData(String path, Object obj)
         {
-            FirebaseResponse response = client.Get("users/" + username);
-
-            User user = JsonConvert.DeserializeObject<User>(response.Body);
+            SetResponse response = client.Set(path, obj);
         }
     }
 }

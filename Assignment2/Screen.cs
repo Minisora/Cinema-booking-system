@@ -8,7 +8,7 @@ namespace Assignment2
 {
     class Screen
     {
-        public String screenNum;
+        public int screenNum;
         public int capacity;
     }
 }
