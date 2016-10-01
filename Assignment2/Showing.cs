@@ -8,10 +8,10 @@ namespace Assignment2
 {
     class Showing
     {
-        String date;
-        String time;
-        String title;
-        String screenNum;
-        int ticketsPurchased;
+        public DateTime dateTime;
+        public int duration;
+        public String title;
+        public int screenNum;
+        public int ticketsPurchased;
     }
 }

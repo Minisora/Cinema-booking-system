@@ -10,6 +10,7 @@ using FireSharp.Config;
 using FireSharp;
 using FireSharp.Response;
 using Newtonsoft.Json.Linq;
+using System.Globalization;
 
 namespace Assignment2
 {
@@ -335,24 +336,32 @@ namespace Assignment2
             String films = getData("films");
 
             dynamic data = JsonConvert.DeserializeObject<dynamic>(films);
-            var list = new List<Film>();
+            var filmList = new List<Film>();
             foreach (var itemDynamic in data)
             {
-                list.Add(JsonConvert.DeserializeObject<Film>(((JProperty)itemDynamic).Value.ToString()));
+                filmList.Add(JsonConvert.DeserializeObject<Film>(((JProperty)itemDynamic).Value.ToString()));
             }
 
             Console.WriteLine("Please choose a film to create a showing:");
-            int count = list.Count;
+            int count = filmList.Count;
             for (int i=0; i<count; i++)
             {
-                Console.WriteLine(i+1 + ". " + list[i].title);
+                Console.WriteLine(i+1 + ". " + filmList[i].title);
             }
 
             int selection;
             Boolean parse, loop = true;
             parse = int.TryParse(Console.ReadLine(), out selection);
 
-            while(loop)
+            var film = new Film
+            {
+                title = filmList[selection - 1].title,
+                ageRating = filmList[selection - 1].ageRating,
+                duration = filmList[selection - 1].duration,
+                trailer = filmList[selection - 1].trailer
+            };
+
+            while (loop)
             {
                 if (parse == false || selection > count || selection < 1)
                 {
@@ -363,13 +372,123 @@ namespace Assignment2
                 {
                     loop = false;
                     Console.WriteLine("You have chosen a film with the following details:");
-                    Console.WriteLine("Title: " + list[selection-1].title);
-                    Console.WriteLine("Age rating: " + list[selection-1].ageRating);
-                    Console.WriteLine("Duration: " + list[selection-1].duration + " minutes");
-                    Console.WriteLine("Short description: " + list[selection-1].trailer);
+                    Console.WriteLine("Title: " + film.title);
+                    Console.WriteLine("Age rating: " + film.ageRating);
+                    Console.WriteLine("Duration: " + film.duration + " minutes");
+                    Console.WriteLine("Short description: " + film.trailer);
                 }
             }
 
+            Console.WriteLine("Enter a date and time to create a showing for " + film.title + " in the format DD/MM/YYYY hhmm:");
+            String date = Console.ReadLine();
+            DateTime dateTime;
+            parse = false;
+            loop = true;
+
+            String[] formats = 
+            { "d/M/yyyy HHmm",
+              "dd/M/yyyy HHmm",
+              "d/MM/yyyy HHmm",
+              "dd/MM/yyyy HHmm",
+              "d/M/yy HHmm",
+              "dd/M/yy HHmm",
+              "d/MM/yy HHmm",
+              "dd/MM/yy HHmm" };
+
+            CultureInfo provider = CultureInfo.InvariantCulture;
+
+            parse = DateTime.TryParseExact(date, formats, provider, DateTimeStyles.AllowWhiteSpaces, out dateTime);
+
+            while (loop)
+            {
+                if (parse == false)
+                {
+                    Console.WriteLine("Please enter a valid date:");
+                    date = Console.ReadLine();
+                    parse = DateTime.TryParseExact(date, formats, provider, DateTimeStyles.None, out dateTime);
+                }
+                else
+                {
+                    loop = false;
+                    String.Format("{0:dd/MM/yyyy HHmm}", dateTime);
+                    Console.WriteLine(dateTime);
+                }
+            }
+
+            Console.WriteLine("Enter a screen number for the new showing:");
+            int screenNum;
+            parse = int.TryParse(Console.ReadLine(), out screenNum);
+
+            String showings = getData("showings/" + screenNum);
+
+            data = JsonConvert.DeserializeObject<dynamic>(showings);
+
+            var showList = new List<Showing>();
+
+            if (data != null)
+            {
+                foreach (var itemDynamic in data)
+                {
+                    showList.Add(JsonConvert.DeserializeObject<Showing>(((JProperty)itemDynamic).Value.ToString()));
+                }
+            } 
+
+            Boolean check = true;
+
+            for (int i=0; i<showList.Count; i++)
+            {
+                DateTime dTime = showList[i].dateTime;
+                int duration = showList[i].duration;
+
+                Console.WriteLine(dateTime);
+                Console.WriteLine(dTime);
+                Console.WriteLine("1. " + dateTime.CompareTo(dTime));
+
+                if (dateTime.CompareTo(dTime) == 1) //dateTime is later than dTime
+                {
+                    Console.WriteLine("Later");
+                    Console.WriteLine(duration);
+
+                    Console.WriteLine(dateTime);
+                    Console.WriteLine(dTime.AddMinutes(duration));
+                    Console.WriteLine("2. " + dateTime.CompareTo(dTime.AddMinutes(duration)));
+
+                    if (dateTime.CompareTo(dTime.AddMinutes(duration)) == -1) //dateTime is earlier than dTime
+                    {
+                        check = false;
+                        break;
+                    }
+                    if(dateTime.CompareTo(dTime.AddMinutes(duration)) == 0) //dateTime is same dTime
+                    {
+                        check = false;
+                        break;
+                    }
+                }
+                else if (dateTime.CompareTo(dTime) == 0)
+                {
+                    check = false;
+                    break;
+                }
+                else //dateTime is earlier then dTime
+                {
+                    
+                }
+            }
+
+            if (check == true)
+            {
+                Showing showing = new Showing
+                {
+                    dateTime = dateTime,
+                    duration = film.duration,
+                    title = film.title,
+                    screenNum = screenNum,
+                    ticketsPurchased = 0
+                };
+
+                pushData("showings/" + screenNum , showing);
+                Console.WriteLine("Showing for " + film.title + " added.");
+            }
             managerMain();
         }
 
@@ -383,6 +502,11 @@ namespace Assignment2
         public static void setData(String path, Object obj)
         {
             SetResponse response = client.Set(path, obj);
+        }
+
+        public static void pushData(String path, Object obj)
+        {
+            PushResponse response = client.Push(path, obj);
         }
     }
 }
