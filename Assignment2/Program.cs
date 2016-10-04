@@ -453,12 +453,7 @@ namespace Assignment2
                     Console.WriteLine(dTime.AddMinutes(duration));
                     Console.WriteLine("2. " + dateTime.CompareTo(dTime.AddMinutes(duration)));
 
-                    if (dateTime.CompareTo(dTime.AddMinutes(duration)) == -1) //dateTime is earlier than dTime
-                    {
-                        check = false;
-                        break;
-                    }
-                    if(dateTime.CompareTo(dTime.AddMinutes(duration)) == 0) //dateTime is same dTime
+                    if (dateTime.CompareTo(dTime.AddMinutes(duration)) == -1 || dateTime.CompareTo(dTime.AddMinutes(duration)) == 0) //dateTime is earlier or same than dTime
                     {
                         check = false;
                         break;
@@ -471,7 +466,11 @@ namespace Assignment2
                 }
                 else //dateTime is earlier then dTime
                 {
-                    
+                    if (dTime.CompareTo(dateTime.AddMinutes(film.duration)) == -1 || dTime.CompareTo(dateTime.AddMinutes(film.duration)) == 0)
+                    {
+                        check = false;
+                        break;
+                    }
                 }
             }
 
@@ -488,6 +487,10 @@ namespace Assignment2
 
                 pushData("showings/" + screenNum , showing);
                 Console.WriteLine("Showing for " + film.title + " added.");
+            }
+            else
+            {
+                Console.WriteLine("Invalid time slot.");
             }
             managerMain();
         }
