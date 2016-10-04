@@ -95,116 +95,130 @@ namespace Assignment2
 
         public static void customerMain()
         {
-            Boolean loop = true;
+            Boolean selectionLoop = true, mainMenuLoop = true;
 
-            Console.WriteLine("\nMain menu:");
-            Console.WriteLine("------------------------------");
-            Console.WriteLine("1. Purchase advance ticket");
-            Console.WriteLine("2. Exit");
-            Console.WriteLine("Please enter a selection:");
-            String selection = Console.ReadLine();
-
-            while (loop)
+            while (mainMenuLoop)
             {
-                switch (selection)
+                selectionLoop = true;
+
+                Console.WriteLine("\nMain menu:");
+                Console.WriteLine("------------------------------");
+                Console.WriteLine("1. Purchase advance ticket");
+                Console.WriteLine("2. Exit");
+                Console.WriteLine("Please enter a selection:");
+                String selection = Console.ReadLine();
+
+                while (selectionLoop)
                 {
-                    case "1":
-                        loop = false;
-                        break;
+                    switch (selection)
+                    {
+                        case "1":
+                            selectionLoop = false;
+                            break;
 
-                    case "2":
-                        loop = false;
-                        return;
+                        case "2":
+                            return;
 
-                    default:
-                        Console.WriteLine("Invalid input, please enter a valid choice.");
-                        selection = Console.ReadLine();
-                        break;
+                        default:
+                            Console.WriteLine("Invalid input, please enter a valid choice.");
+                            selection = Console.ReadLine();
+                            break;
+                    }
                 }
             }
         }
 
         public static void clerkMain()
         {
-            Boolean loop = true;
+            Boolean selectionLoop = true, mainMenuLoop = true;
 
-            Console.WriteLine("\nMain menu:");
-            Console.WriteLine("------------------------------");
-            Console.WriteLine("1. Purchase tickets");
-            Console.WriteLine("2. Exit");
-            Console.WriteLine("Please enter a selection:");
-            String selection = Console.ReadLine();
-
-            while (loop)
+            while (mainMenuLoop)
             {
-                switch (selection)
+                selectionLoop = true;
+
+                Console.WriteLine("\nMain menu:");
+                Console.WriteLine("------------------------------");
+                Console.WriteLine("1. Purchase tickets");
+                Console.WriteLine("2. Exit");
+                Console.WriteLine("Please enter a selection:");
+                String selection = Console.ReadLine();
+
+                while (selectionLoop)
                 {
-                    case "1":
-                        loop = false;
-                        break;
+                    switch (selection)
+                    {
+                        case "1":
+                            selectionLoop = false;
+                            break;
 
-                    case "2":
-                        loop = false;
-                        return;
+                        case "2":
+                            return;
 
-                    default:
-                        Console.WriteLine("Invalid input, please enter a valid choice.");
-                        selection = Console.ReadLine();
-                        break;
+                        default:
+                            Console.WriteLine("Invalid input, please enter a valid choice.");
+                            selection = Console.ReadLine();
+                            break;
+                    }
                 }
             }
         }
 
         public static void managerMain()
         {
-            Boolean loop = true;
+            Boolean selectionLoop = true, mainMenuLoop = true;
 
-            Console.WriteLine("\nMain menu:");
-            Console.WriteLine("------------------------------");
-            Console.WriteLine("1. Add film");
-            Console.WriteLine("2. Delete film");
-            Console.WriteLine("3. Add screen");
-            Console.WriteLine("4. Add showing");
-            Console.WriteLine("5. Cancel showing");
-            Console.WriteLine("6. Exit");
-            Console.WriteLine("Please enter a selection:");
-            String selection = Console.ReadLine();
-
-            while (loop)
+            while (mainMenuLoop)
             {
-                switch (selection)
+                selectionLoop = true;
+
+                Console.WriteLine("\nMain menu:");
+                Console.WriteLine("------------------------------");
+                Console.WriteLine("1. Add film");
+                Console.WriteLine("2. Delete film");
+                Console.WriteLine("3. Add screen");
+                Console.WriteLine("4. Add showing");
+                Console.WriteLine("5. Cancel showing");
+                Console.WriteLine("6. Exit");
+                Console.WriteLine("Please enter a selection:");
+                String selection = Console.ReadLine();
+
+                while (selectionLoop)
                 {
-                    case "1":
-                        loop = false;
-                        addFilm();
-                        break;
+                    switch (selection)
+                    {
+                        case "1":
+                            selectionLoop = false;
+                            addFilm();
+                            break;
 
-                    case "2":
-                        loop = false;
-                        break;
+                        case "2":
+                            selectionLoop = false;
+                            deleteFilm();
+                            break;
 
-                    case "3":
-                        loop = false;
-                        addScreen();
-                        break;
+                        case "3":
+                            selectionLoop = false;
+                            addScreen();
+                            break;
 
-                    case "4":
-                        loop = false;
-                        addShowing();
-                        break;
+                        case "4":
+                            selectionLoop = false;
+                            addShowing();
+                            break;
 
-                    case "5":
-                        loop = false;
-                        break;
+                        case "5":
+                            selectionLoop = false;
+                            cancelShowing();
+                            break;
 
-                    case "6":
-                        loop = false;
-                        return;
+                        case "6":
+                            return;
 
-                    default:
-                        Console.WriteLine("Invalid input, please enter a valid choice.");
-                        selection = Console.ReadLine();
-                        break;
+                        default:
+                            Console.WriteLine("Invalid input, please enter a valid choice.");
+                            selection = Console.ReadLine();
+                            break;
+                    }
                 }
             }
         }
@@ -265,8 +279,65 @@ namespace Assignment2
                 }
             }
             while (FilmLoop);
+        }
 
-            managerMain();
+        public static void deleteFilm()
+        {
+            String films = getData("films");
+
+            dynamic data = JsonConvert.DeserializeObject<dynamic>(films);
+            var filmList = new List<Film>();
+            foreach (var itemDynamic in data)
+            {
+                filmList.Add(JsonConvert.DeserializeObject<Film>(((JProperty)itemDynamic).Value.ToString()));
+            }
+
+            Console.WriteLine("Please choose a film to delete:");
+            int count = filmList.Count;
+            for (int i = 0; i < count; i++)
+            {
+                Console.WriteLine(i + 1 + ". " + filmList[i].title);
+            }
+
+            int selection;
+            Boolean parse, loop = true;
+            parse = int.TryParse(Console.ReadLine(), out selection);
+
+            var film = new Film
+            {
+                title = "",
+                ageRating = "",
+                duration = 0,
+                trailer = ""
+            };
+
+            while (loop)
+            {
+                if (parse == false || selection > count || selection < 1)
+                {
+                    Console.WriteLine("Please enter a valid choice:");
+                    parse = int.TryParse(Console.ReadLine(), out selection);
+                }
+                else
+                {
+                    loop = false;
+
+                    film.title = filmList[selection - 1].title;
+                    film.ageRating = filmList[selection - 1].ageRating;
+                    film.duration = filmList[selection - 1].duration;
+                    film.trailer = filmList[selection - 1].trailer;
+
+                    Console.WriteLine("You have chosen a film with the following details:");
+                    Console.WriteLine("Title: " + film.title);
+                    Console.WriteLine("Age rating: " + film.ageRating);
+                    Console.WriteLine("Duration: " + film.duration + " minutes");
+                    Console.WriteLine("Short description: " + film.trailer);
+                }
+            }
+
+            deleteData("films/" + film.title);
+
+            Console.WriteLine("Film " + film.title + " has been deleted.");
         }
 
         public static void addScreen()
@@ -327,8 +398,6 @@ namespace Assignment2
                 }
             }
             while (ScreenLoop);
-
-            managerMain();
         }
 
         public static void addShowing()
@@ -355,10 +424,10 @@ namespace Assignment2
 
             var film = new Film
             {
-                title = filmList[selection - 1].title,
-                ageRating = filmList[selection - 1].ageRating,
-                duration = filmList[selection - 1].duration,
-                trailer = filmList[selection - 1].trailer
+                title = "",
+                ageRating = "",
+                duration = 0,
+                trailer = ""
             };
 
             while (loop)
@@ -371,6 +440,12 @@ namespace Assignment2
                 else
                 {
                     loop = false;
+
+                    film.title = filmList[selection - 1].title;
+                    film.ageRating = filmList[selection - 1].ageRating;
+                    film.duration = filmList[selection - 1].duration;
+                    film.trailer = filmList[selection - 1].trailer;
+
                     Console.WriteLine("You have chosen a film with the following details:");
                     Console.WriteLine("Title: " + film.title);
                     Console.WriteLine("Age rating: " + film.ageRating);
@@ -485,14 +560,127 @@ namespace Assignment2
                     ticketsPurchased = 0
                 };
 
-                pushData("showings/" + screenNum , showing);
+                setData("showings/" + screenNum + "/" + showing.dateTime, showing);
                 Console.WriteLine("Showing for " + film.title + " added.");
             }
             else
             {
                 Console.WriteLine("Invalid time slot.");
             }
-            managerMain();
+        }
+
+        public static void cancelShowing()
+        {
+            String screens = getData("screens");
+
+            dynamic data = JsonConvert.DeserializeObject<dynamic>(screens);
+            var screenList = new List<Screen>();
+
+            foreach (var itemDynamic in data)
+            {
+                screenList.Add(JsonConvert.DeserializeObject<Screen>(((JProperty)itemDynamic).Value.ToString()));
+            }
+
+            Console.WriteLine("Please choose a screen to delete a showing:");
+            int count = screenList.Count;
+            for (int i = 0; i < count; i++)
+            {
+                Console.WriteLine(i + 1 + ". Screen " + screenList[i].screenNum);
+            }
+
+            int selection;
+            Boolean parse, loop = true;
+            parse = int.TryParse(Console.ReadLine(), out selection);
+
+            var screen = new Screen
+            {
+                screenNum = 0,
+                capacity = 0
+            };
+
+            while (loop)
+            {
+                if (parse == false || selection > count || selection < 1)
+                {
+                    Console.WriteLine("Please enter a valid choice:");
+                    parse = int.TryParse(Console.ReadLine(), out selection);
+                }
+                else
+                {
+                    loop = false;
+
+                    screen.screenNum = screenList[selection - 1].screenNum;
+                    screen.capacity = screenList[selection - 1].capacity;
+
+                    Console.WriteLine("You have chosen a screen with the following details:");
+                    Console.WriteLine("Screen number: " + screen.screenNum);
+                    Console.WriteLine("Capacity: " + screen.capacity);
+                }
+            }
+
+            String showings = getData("showings/" + screen.screenNum);
+
+            data = JsonConvert.DeserializeObject<dynamic>(showings);
+
+            if (data == null)
+            {
+                Console.WriteLine("The selected screen as no showings.");
+                return;
+            }
+            var showList = new List<Showing>();
+            foreach (var itemDynamic in data)
+            {
+                showList.Add(JsonConvert.DeserializeObject<Showing>(((JProperty)itemDynamic).Value.ToString()));
+            }
+
+            Console.WriteLine("Please choose a showing to delete:");
+            count = showList.Count;
+            for (int i = 0; i < count; i++)
+            {
+                Console.WriteLine(i + 1 + ". " + showList[i].title + " - " + showList[i].dateTime);
+            }
+
+            loop = true;
+            parse = int.TryParse(Console.ReadLine(), out selection);
+
+            var showing = new Showing
+            {
+                dateTime = new DateTime(),
+                duration = 0,
+                title = "",
+                screenNum = 0,
+                ticketsPurchased = 0
+            };
+
+            while (loop)
+            {
+                if (parse == false || selection > count || selection < 1)
+                {
+                    Console.WriteLine("Please enter a valid choice:");
+                    parse = int.TryParse(Console.ReadLine(), out selection);
+                }
+                else
+                {
+                    loop = false;
+
+                    showing.dateTime = showList[selection - 1].dateTime;
+                    showing.duration = showList[selection - 1].duration;
+                    showing.title = showList[selection - 1].title;
+                    showing.screenNum = showList[selection - 1].screenNum;
+                    showing.ticketsPurchased = showList[selection - 1].ticketsPurchased;
+
+                    Console.WriteLine("You have chosen a showing with the following details:");
+                    Console.WriteLine("Date and time: " + showing.dateTime);
+                    Console.WriteLine("Duration: " + showing.duration);
+                    Console.WriteLine("Title: " + showing.title);
+                    Console.WriteLine("Screen number: " + showing.screenNum);
+                    Console.WriteLine("Tickets purchased: " + showing.ticketsPurchased);
+                }
+            }
+
+            deleteData("showings/" + screen.screenNum + "/" + showing.dateTime);
+
+            Console.WriteLine("Showing deleted successfully.");
         }
 
         public static String getData(String path)
@@ -510,6 +698,11 @@ namespace Assignment2
         public static void pushData(String path, Object obj)
         {
             PushResponse response = client.Push(path, obj);
+        }
+
+        public static void deleteData(String path)
+        {
+            FirebaseResponse response = client.Delete(path);
         }
     }
 }
