@@ -103,7 +103,7 @@ namespace Assignment2
                 Console.Clear();
 
                 Console.WriteLine("------------------------------");
-                Console.WriteLine("Customer Main menu");
+                Console.WriteLine("Customer Main Menu");
                 Console.WriteLine("------------------------------");
                 Console.WriteLine("1. Purchase advance ticket");
                 Console.WriteLine("2. Exit");
@@ -140,7 +140,7 @@ namespace Assignment2
                 Console.Clear();
 
                 Console.WriteLine("------------------------------");
-                Console.WriteLine("Clerk Main menu");
+                Console.WriteLine("Clerk Main Menu");
                 Console.WriteLine("------------------------------");
                 Console.WriteLine("1. Purchase tickets");
                 Console.WriteLine("2. Exit");
@@ -177,7 +177,7 @@ namespace Assignment2
                 Console.Clear();
 
                 Console.WriteLine("------------------------------");
-                Console.WriteLine("Manager Main menu");
+                Console.WriteLine("Manager Main Menu");
                 Console.WriteLine("------------------------------");
                 Console.WriteLine("1. Add film");
                 Console.WriteLine("2. Delete film");
@@ -360,11 +360,33 @@ namespace Assignment2
 
         public static void addScreen()
         {
+            String screens = getData("screens");
+
+            dynamic data = JsonConvert.DeserializeObject<dynamic>(screens);
+            var screenList = new List<Screen>();
+            foreach (var itemDynamic in data)
+            {
+                screenList.Add(JsonConvert.DeserializeObject<Screen>(((JProperty)itemDynamic).Value.ToString()));
+            }
+
             Boolean ScreenLoop = true;
             Console.Clear();
             Console.WriteLine("------------------------------");
             Console.WriteLine("Add Screen");
             Console.WriteLine("------------------------------");
+            Console.Write("Existing screen numbers: ");
+            int count = screenList.Count;
+            for (int i = 0; i < count; i++)
+            {
+                if ((i+1) != count)
+                {
+                    Console.Write(screenList[i].screenNum + ", ");
+                }
+                else
+                {
+                    Console.Write(screenList[i].screenNum + "\n");
+                }               
+            }
             Console.WriteLine("Enter the new screen number:");
             int screenNum;
             Boolean parse; 
@@ -379,43 +401,44 @@ namespace Assignment2
                 }
                 else
                 {
-                    String response = getData("screens/" + screenNum);
-
-                    if (response != "null")
+                    for (int i = 0; i < count; i++)
                     {
-                        Console.WriteLine("A screen with the screen number " + screenNum + " already exists.");
-                        Console.WriteLine("Please enter a new screen number:");
-                        parse = int.TryParse(Console.ReadLine(), out screenNum);
-                    }
-                    else
-                    {
-                        ScreenLoop = false;
-                        Console.WriteLine("Please enter the capacity of the new screen:");
-                        int capacity;
-                        Boolean parse2, capacityLoop = true;
-                        parse2 = int.TryParse(Console.ReadLine(), out capacity);
-
-                        while (capacityLoop)
+                        if (screenList[i].screenNum == screenNum)
                         {
-                            if (parse2 == false || capacity < 1)
+                            Console.WriteLine("A screen with the screen number " + screenNum + " already exists.");
+                            Console.WriteLine("Please enter a new screen number:");
+                            parse = int.TryParse(Console.ReadLine(), out screenNum);
+                        }
+                        else
+                        {
+                            ScreenLoop = false;
+                            Console.WriteLine("Please enter the capacity of the new screen:");
+                            int capacity;
+                            Boolean parse2, capacityLoop = true;
+                            parse2 = int.TryParse(Console.ReadLine(), out capacity);
+
+                            while (capacityLoop)
                             {
-                                Console.WriteLine("Please enter a valid number:");
-                                parse2 = int.TryParse(Console.ReadLine(), out capacity);
-                            }
-                            else
-                            {
-                                capacityLoop = false;
-                                var screen = new Screen
+                                if (parse2 == false || capacity < 1)
                                 {
-                                    screenNum = screenNum,
-                                    capacity = capacity
-                                };
+                                    Console.WriteLine("Please enter a valid number:");
+                                    parse2 = int.TryParse(Console.ReadLine(), out capacity);
+                                }
+                                else
+                                {
+                                    capacityLoop = false;
+                                    var screen = new Screen
+                                    {
+                                        screenNum = screenNum,
+                                        capacity = capacity
+                                    };
 
-                                setData("screens/" + screenNum, screen);
+                                    setData("screens/" + screenNum, screen);
 
-                                Console.WriteLine("Screen " + screenNum + " with a capacity of " + capacity + " has been successfully added.");
-                                Console.WriteLine("Please press any key to return to the main menu.");
-                                Console.ReadKey();
+                                    Console.WriteLine("Screen " + screenNum + " with a capacity of " + capacity + " has been successfully added.");
+                                    Console.WriteLine("Please press any key to return to the main menu.");
+                                    Console.ReadKey();
+                                }
                             }
                         }
                     }
