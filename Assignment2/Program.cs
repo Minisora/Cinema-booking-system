@@ -100,8 +100,10 @@ namespace Assignment2
             while (mainMenuLoop)
             {
                 selectionLoop = true;
+                Console.Clear();
 
-                Console.WriteLine("\nMain menu:");
+                Console.WriteLine("------------------------------");
+                Console.WriteLine("Customer Main menu");
                 Console.WriteLine("------------------------------");
                 Console.WriteLine("1. Purchase advance ticket");
                 Console.WriteLine("2. Exit");
@@ -135,8 +137,10 @@ namespace Assignment2
             while (mainMenuLoop)
             {
                 selectionLoop = true;
+                Console.Clear();
 
-                Console.WriteLine("\nMain menu:");
+                Console.WriteLine("------------------------------");
+                Console.WriteLine("Clerk Main menu");
                 Console.WriteLine("------------------------------");
                 Console.WriteLine("1. Purchase tickets");
                 Console.WriteLine("2. Exit");
@@ -170,8 +174,10 @@ namespace Assignment2
             while (mainMenuLoop)
             {
                 selectionLoop = true;
+                Console.Clear();
 
-                Console.WriteLine("\nMain menu:");
+                Console.WriteLine("------------------------------");
+                Console.WriteLine("Manager Main menu");
                 Console.WriteLine("------------------------------");
                 Console.WriteLine("1. Add film");
                 Console.WriteLine("2. Delete film");
@@ -226,7 +232,11 @@ namespace Assignment2
         public static void addFilm()
         {
             Boolean FilmLoop = true;
-            Console.WriteLine("\nEnter the new film title:");
+            Console.Clear();
+            Console.WriteLine("------------------------------");
+            Console.WriteLine("Add Film");
+            Console.WriteLine("------------------------------");
+            Console.WriteLine("Enter the new film title:");
             String title = Console.ReadLine();
 
             do
@@ -273,9 +283,11 @@ namespace Assignment2
                         trailer = trailer
                     };
 
-                    setData("films/", film);
+                    setData("films/" + title, film);
 
                     Console.WriteLine("The new film " + title + " has been successfully added.");
+                    Console.WriteLine("Please press any key to return to the main menu.");
+                    Console.ReadKey();
                 }
             }
             while (FilmLoop);
@@ -292,6 +304,10 @@ namespace Assignment2
                 filmList.Add(JsonConvert.DeserializeObject<Film>(((JProperty)itemDynamic).Value.ToString()));
             }
 
+            Console.Clear();
+            Console.WriteLine("------------------------------");
+            Console.WriteLine("Delete Film");
+            Console.WriteLine("------------------------------");
             Console.WriteLine("Please choose a film to delete:");
             int count = filmList.Count;
             for (int i = 0; i < count; i++)
@@ -338,12 +354,18 @@ namespace Assignment2
             deleteData("films/" + film.title);
 
             Console.WriteLine("Film " + film.title + " has been deleted.");
+            Console.WriteLine("Please press any key to return to the main menu.");
+            Console.ReadKey();
         }
 
         public static void addScreen()
         {
             Boolean ScreenLoop = true;
-            Console.WriteLine("\nEnter the new screen number:");
+            Console.Clear();
+            Console.WriteLine("------------------------------");
+            Console.WriteLine("Add Screen");
+            Console.WriteLine("------------------------------");
+            Console.WriteLine("Enter the new screen number:");
             int screenNum;
             Boolean parse; 
             parse = int.TryParse(Console.ReadLine(), out screenNum);
@@ -392,6 +414,8 @@ namespace Assignment2
                                 setData("screens/" + screenNum, screen);
 
                                 Console.WriteLine("Screen " + screenNum + " with a capacity of " + capacity + " has been successfully added.");
+                                Console.WriteLine("Please press any key to return to the main menu.");
+                                Console.ReadKey();
                             }
                         }
                     }
@@ -411,6 +435,10 @@ namespace Assignment2
                 filmList.Add(JsonConvert.DeserializeObject<Film>(((JProperty)itemDynamic).Value.ToString()));
             }
 
+            Console.Clear();
+            Console.WriteLine("------------------------------");
+            Console.WriteLine("Add Showing");
+            Console.WriteLine("------------------------------");
             Console.WriteLine("Please choose a film to create a showing:");
             int count = filmList.Count;
             for (int i=0; i<count; i++)
@@ -562,6 +590,8 @@ namespace Assignment2
 
                 setData("showings/" + screenNum + "/" + showing.dateTime, showing);
                 Console.WriteLine("Showing for " + film.title + " added.");
+                Console.WriteLine("Please press any key to return to the main menu.");
+                Console.ReadKey();
             }
             else
             {
@@ -581,6 +611,10 @@ namespace Assignment2
                 screenList.Add(JsonConvert.DeserializeObject<Screen>(((JProperty)itemDynamic).Value.ToString()));
             }
 
+            Console.Clear();
+            Console.WriteLine("------------------------------");
+            Console.WriteLine("Cancel Showing");
+            Console.WriteLine("------------------------------");
             Console.WriteLine("Please choose a screen to delete a showing:");
             int count = screenList.Count;
             for (int i = 0; i < count; i++)
@@ -624,7 +658,9 @@ namespace Assignment2
 
             if (data == null)
             {
-                Console.WriteLine("The selected screen as no showings.");
+                Console.WriteLine("The selected screen has no showings.");
+                Console.WriteLine("Please press any key to return to the main menu.");
+                Console.ReadKey();
                 return;
             }
             var showList = new List<Showing>();
@@ -681,6 +717,8 @@ namespace Assignment2
             deleteData("showings/" + screen.screenNum + "/" + showing.dateTime);
 
             Console.WriteLine("Showing deleted successfully.");
+            Console.WriteLine("Please press any key to return to the main menu.");
+            Console.ReadKey();
         }
 
         public static String getData(String path)
