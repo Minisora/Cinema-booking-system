@@ -497,11 +497,11 @@ namespace Assignment2
                     film.duration = filmList[selection - 1].duration;
                     film.trailer = filmList[selection - 1].trailer;
 
-                    Console.WriteLine("You have chosen a film with the following details:");
-                    Console.WriteLine("Title: " + film.title);
-                    Console.WriteLine("Age rating: " + film.ageRating);
-                    Console.WriteLine("Duration: " + film.duration + " minutes");
-                    Console.WriteLine("Short description: " + film.trailer);
+                    //Console.WriteLine("You have chosen a film with the following details:");
+                    //Console.WriteLine("Title: " + film.title);
+                    //Console.WriteLine("Age rating: " + film.ageRating);
+                    //Console.WriteLine("Duration: " + film.duration + " minutes");
+                    //Console.WriteLine("Short description: " + film.trailer);
                 }
             }
 
@@ -668,10 +668,6 @@ namespace Assignment2
 
                     screen.screenNum = screenList[selection - 1].screenNum;
                     screen.capacity = screenList[selection - 1].capacity;
-
-                    Console.WriteLine("You have chosen a screen with the following details:");
-                    Console.WriteLine("Screen number: " + screen.screenNum);
-                    Console.WriteLine("Capacity: " + screen.capacity);
                 }
             }
 
@@ -692,6 +688,10 @@ namespace Assignment2
                 showList.Add(JsonConvert.DeserializeObject<Showing>(((JProperty)itemDynamic).Value.ToString()));
             }
 
+            Console.Clear();
+            Console.WriteLine("------------------------------");
+            Console.WriteLine("Screen " + screenList[selection-1].screenNum + " showings");
+            Console.WriteLine("------------------------------");
             Console.WriteLine("Please choose a showing to delete:");
             count = showList.Count;
             for (int i = 0; i < count; i++)
@@ -720,20 +720,30 @@ namespace Assignment2
                 }
                 else
                 {
-                    loop = false;
+                    if (showList[selection - 1].ticketsPurchased > 0)
+                    {
+                        Console.WriteLine("The selected showing has sold tickets. Unable to delete showing.");
+                        Console.WriteLine("Please press any key to return to the main menu.");
+                        Console.ReadKey();
+                        return;
+                    }
+                    else
+                    {
+                        loop = false;
 
-                    showing.dateTime = showList[selection - 1].dateTime;
-                    showing.duration = showList[selection - 1].duration;
-                    showing.title = showList[selection - 1].title;
-                    showing.screenNum = showList[selection - 1].screenNum;
-                    showing.ticketsPurchased = showList[selection - 1].ticketsPurchased;
+                        showing.dateTime = showList[selection - 1].dateTime;
+                        showing.duration = showList[selection - 1].duration;
+                        showing.title = showList[selection - 1].title;
+                        showing.screenNum = showList[selection - 1].screenNum;
+                        showing.ticketsPurchased = showList[selection - 1].ticketsPurchased;
 
-                    Console.WriteLine("You have chosen a showing with the following details:");
-                    Console.WriteLine("Date and time: " + showing.dateTime);
-                    Console.WriteLine("Duration: " + showing.duration);
-                    Console.WriteLine("Title: " + showing.title);
-                    Console.WriteLine("Screen number: " + showing.screenNum);
-                    Console.WriteLine("Tickets purchased: " + showing.ticketsPurchased);
+                        Console.WriteLine("You have chosen a showing with the following details:");
+                        Console.WriteLine("Date and time: " + showing.dateTime);
+                        Console.WriteLine("Duration: " + showing.duration);
+                        Console.WriteLine("Title: " + showing.title);
+                        Console.WriteLine("Screen number: " + showing.screenNum);
+                        Console.WriteLine("Tickets purchased: " + showing.ticketsPurchased);
+                    }           
                 }
             }
 
