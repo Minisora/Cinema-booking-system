@@ -512,7 +512,7 @@ namespace Assignment2
             {
                 Console.WriteLine("The selected film has existing showings. Film cannot be deleted.");
             }
-            Console.WriteLine("Press any key to return to the maun menu.");
+            Console.WriteLine("Press any key to return to the main menu.");
             Console.ReadKey();
         }
 
