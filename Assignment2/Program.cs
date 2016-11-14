@@ -858,6 +858,7 @@ namespace Assignment2
             {
                 Console.WriteLine(i + 1 + ". " + filmList[i].title);
             }
+            Console.WriteLine(count + 1 + ". Exit to main menu");
 
             int selection;
             Boolean parse, loop = true;
@@ -873,6 +874,10 @@ namespace Assignment2
 
             while (loop)
             {
+                if (selection == count + 1)
+                {
+                    return;
+                }
                 if (parse == false || selection > count || selection < 1)
                 {
                     Console.WriteLine("Please enter a valid choice:");
@@ -880,26 +885,28 @@ namespace Assignment2
                 }
                 else
                 {
-                    loop = false;
+                    String showings = getData("showing/" + filmList[selection-1].title);
 
-                    film.title = filmList[selection - 1].title;
-                    film.ageRating = filmList[selection - 1].ageRating;
-                    film.duration = filmList[selection - 1].duration;
-                    film.trailer = filmList[selection - 1].trailer;
+                    data = JsonConvert.DeserializeObject<dynamic>(showings);
+
+                    if (data == null)
+                    {
+                        Console.WriteLine("The selected screen has no showings.");
+                        Console.WriteLine("Please select another option.");
+                        parse = int.TryParse(Console.ReadLine(), out selection);
+                    }
+                    else
+                    {
+                        loop = false;
+
+                        film.title = filmList[selection - 1].title;
+                        film.ageRating = filmList[selection - 1].ageRating;
+                        film.duration = filmList[selection - 1].duration;
+                        film.trailer = filmList[selection - 1].trailer;
+                    }                 
                 }
             }
 
-            String showings = getData("showing/" + film.title);
-
-            data = JsonConvert.DeserializeObject<dynamic>(showings);
-
-            if (data == null)
-            {
-                Console.WriteLine("The selected screen has no showings.");
-                Console.WriteLine("Please press any key to return to the main menu.");
-                Console.ReadKey();
-                return;
-            }
             var showList = new List<Showing>();
             foreach (var itemDynamic in data)
             {
