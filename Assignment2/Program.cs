@@ -233,12 +233,141 @@ namespace Assignment2
 
         public static void purchaseTicket()
         {
+            String title = "";
+            String films = getData("films");
+
+            dynamic data = JsonConvert.DeserializeObject<dynamic>(films);
+            var filmList = new List<Film>();
+            foreach (var itemDynamic in data)
+            {
+                filmList.Add(JsonConvert.DeserializeObject<Film>(((JProperty)itemDynamic).Value.ToString()));
+            }
+
             Console.Clear();
             Console.WriteLine("------------------------------");
             Console.WriteLine("Purchase Ticket");
             Console.WriteLine("------------------------------");
+            Console.WriteLine("Please choose a film:");
+            int count = filmList.Count;
+            for (int i = 0; i < count; i++)
+            {
+                Console.WriteLine(i + 1 + ". " + filmList[i].title);
+            }
 
-            String response = getData("showing");
+            int selection;
+            Boolean parse, loop = true;
+            parse = int.TryParse(Console.ReadLine(), out selection);
+
+            while (loop)
+            {
+                if (parse == false || selection > count || selection < 1)
+                {
+                    Console.WriteLine("Please enter a valid choice:");
+                    parse = int.TryParse(Console.ReadLine(), out selection);
+                }
+                else
+                {
+                    loop = false;
+                    title = filmList[selection - 1].title;
+                }
+            }
+
+            String showings = getData("showing/" + title);
+
+            data = JsonConvert.DeserializeObject<dynamic>(showings);
+
+            if (data == null)
+            {
+                Console.WriteLine("There are no showings for " + title + ".");
+                Console.WriteLine("Press any key to return to the main menu.");
+                Console.ReadKey();
+                return;
+            }
+            var showingList = new List<Showing>();
+            foreach (var itemDynamic in data)
+            {
+                showingList.Add(JsonConvert.DeserializeObject<Showing>(((JProperty)itemDynamic).Value.ToString()));
+            }
+
+            count = showingList.Count;
+            Console.Clear();
+
+            Console.WriteLine("------------------------------");
+            Console.WriteLine("Showings for " + title);
+            Console.WriteLine("------------------------------");
+            Console.WriteLine("Please choose a showing:");
+            
+            for (int i = 0; i < count; i++)
+            {
+                Console.WriteLine(i + 1 + ". " + showingList[i].dateTime);
+            }
+
+            loop = true;
+            parse = int.TryParse(Console.ReadLine(), out selection);
+
+            Showing showing = new Showing
+            {
+                dateTime = new DateTime(),
+                duration = 0,
+                title = "",
+                screenNum = 0,
+                ticketsPurchased = 0
+            };
+
+            while (loop)
+            {
+                if (parse == false || selection > count || selection < 1)
+                {
+                    Console.WriteLine("Please enter a valid choice:");
+                    parse = int.TryParse(Console.ReadLine(), out selection);
+                }
+                else
+                {
+                    loop = false;
+                    Boolean loop2 = true;
+
+                    showing.dateTime = showingList[selection - 1].dateTime;
+                    showing.duration = showingList[selection - 1].duration;
+                    showing.title = showingList[selection - 1].title;
+                    showing.screenNum = showingList[selection - 1].screenNum;
+                    showing.ticketsPurchased = showingList[selection - 1].ticketsPurchased;
+
+                    String response = getData("screens/" + showing.screenNum.ToString());
+
+                    Screen screen = JsonConvert.DeserializeObject<Screen>(response);
+                    int purchase = screen.capacity - showing.ticketsPurchased;
+                    Console.WriteLine("Available tickets for purchase: " + purchase);
+
+                    Console.WriteLine("Please choose the number of tickets to purchase:");
+                    parse = int.TryParse(Console.ReadLine(), out selection);
+
+                    while (loop2)
+                    {
+                        if (parse == false || selection < 1 || selection > purchase)
+                        {
+                            Console.WriteLine("Please enter a valid number:");
+                            parse = int.TryParse(Console.ReadLine(), out selection);
+                        }
+                        else
+                        {
+                            loop2 = false;
+                            showing.ticketsPurchased += selection;
+                        }
+                    }
+                }
+            }
+
+            //update tickets purchased          
+            setData("showings/" + showing.screenNum + "/" + showing.dateTime, showing);
+            setData("showing/" + showing.title + "/" + showing.dateTime, showing);
+
+            String dateTime = showing.dateTime.ToString();
+            String.Format("{0:dd/MM/yyyy HHmm}", dateTime);
+
+            Console.WriteLine(selection + " tickets purchased for " + showing.title + " on " + dateTime);
+
+            Console.WriteLine("Press any key to return to the main menu.");
+            Console.ReadKey();
         }
 
         public static void addFilm()
