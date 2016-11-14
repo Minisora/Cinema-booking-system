@@ -116,6 +116,7 @@ namespace Assignment2
                     {
                         case "1":
                             selectionLoop = false;
+                            purchaseTicket();
                             break;
 
                         case "2":
@@ -153,6 +154,7 @@ namespace Assignment2
                     {
                         case "1":
                             selectionLoop = false;
+                            purchaseTicket();
                             break;
 
                         case "2":
@@ -227,6 +229,16 @@ namespace Assignment2
                     }
                 }
             }
+        }
+
+        public static void purchaseTicket()
+        {
+            Console.Clear();
+            Console.WriteLine("------------------------------");
+            Console.WriteLine("Purchase Ticket");
+            Console.WriteLine("------------------------------");
+
+            String response = getData("showing");
         }
 
         public static void addFilm()
@@ -541,9 +553,63 @@ namespace Assignment2
                 }
             }
 
+            //get list of screens
+            String screens = getData("screens");
+
+            data = JsonConvert.DeserializeObject<dynamic>(screens);
+            var screenList = new List<Screen>();
+            foreach (var itemDynamic in data)
+            {
+                screenList.Add(JsonConvert.DeserializeObject<Screen>(((JProperty)itemDynamic).Value.ToString()));
+            }
+
+            Console.Write("Existing screen numbers: ");
+            count = screenList.Count;
+            for (int i = 0; i < count; i++)
+            {
+                if ((i + 1) != count)
+                {
+                    Console.Write(screenList[i].screenNum + ", ");
+                }
+                else
+                {
+                    Console.Write(screenList[i].screenNum + "\n");
+                }
+            }
             Console.WriteLine("Enter a screen number for the new showing:");
+
+            Boolean screenLoop = true;
             int screenNum;
             parse = int.TryParse(Console.ReadLine(), out screenNum);
+            do
+            {
+                if (screenNum < 1 || parse == false)
+                {
+                    Console.WriteLine("Please enter a valid screen number:");
+                    parse = int.TryParse(Console.ReadLine(), out screenNum);
+                }
+                else
+                {
+                    Boolean screenCheck = false;
+                    for (int i = 0; i < count; i++)
+                    {
+                        if (screenList[i].screenNum == screenNum)
+                        {
+                            screenCheck = true;
+                            screenLoop = false;
+                            
+                        }
+                    }
+
+                    if (screenCheck == false)
+                    {
+                        Console.WriteLine("A screen with the screen number " + screenNum + " does not exist.");
+                        Console.WriteLine("Please enter an existing screen number:");
+                        parse = int.TryParse(Console.ReadLine(), out screenNum);
+                    }
+                }
+            }
+            while (screenLoop);
 
             String showings = getData("showings/" + screenNum);
 
@@ -612,6 +678,7 @@ namespace Assignment2
                 };
 
                 setData("showings/" + screenNum + "/" + showing.dateTime, showing);
+                setData("showing/" + showing.title + "/" + showing.dateTime, showing);
                 Console.WriteLine("Showing for " + film.title + " added.");
                 Console.WriteLine("Please press any key to return to the main menu.");
                 Console.ReadKey();
