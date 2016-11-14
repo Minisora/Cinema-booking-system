@@ -492,10 +492,19 @@ namespace Assignment2
                 }
             }
 
-            deleteData("films/" + film.title);
+            String showing = getData("showing/" + film.title);
 
-            Console.WriteLine("Film " + film.title + " has been deleted.");
-            Console.WriteLine("Please press any key to return to the main menu.");
+            if (showing == null)
+            {
+                deleteData("films/" + film.title);
+
+                Console.WriteLine("Film " + film.title + " has been deleted.");
+            }
+            else
+            {
+                Console.WriteLine("The selected film has existing showings. Film cannot be deleted.");
+            }
+            Console.WriteLine("Press any key to return to the maun menu.");
             Console.ReadKey();
         }
 
@@ -820,35 +829,37 @@ namespace Assignment2
 
         public static void cancelShowing()
         {
-            String screens = getData("screens");
+            String films = getData("films");
 
-            dynamic data = JsonConvert.DeserializeObject<dynamic>(screens);
-            var screenList = new List<Screen>();
+            dynamic data = JsonConvert.DeserializeObject<dynamic>(films);
+            var filmList = new List<Film>();
 
             foreach (var itemDynamic in data)
             {
-                screenList.Add(JsonConvert.DeserializeObject<Screen>(((JProperty)itemDynamic).Value.ToString()));
+                filmList.Add(JsonConvert.DeserializeObject<Film>(((JProperty)itemDynamic).Value.ToString()));
             }
 
             Console.Clear();
             Console.WriteLine("------------------------------");
             Console.WriteLine("Cancel Showing");
             Console.WriteLine("------------------------------");
-            Console.WriteLine("Please choose a screen to delete a showing:");
-            int count = screenList.Count;
+            Console.WriteLine("Please choose a film to delete a showing:");
+            int count = filmList.Count;
             for (int i = 0; i < count; i++)
             {
-                Console.WriteLine(i + 1 + ". Screen " + screenList[i].screenNum);
+                Console.WriteLine(i + 1 + ". " + filmList[i].title);
             }
 
             int selection;
             Boolean parse, loop = true;
             parse = int.TryParse(Console.ReadLine(), out selection);
 
-            var screen = new Screen
+            var film = new Film
             {
-                screenNum = 0,
-                capacity = 0
+                title = "",
+                ageRating = "",
+                duration = 0,
+                trailer = ""
             };
 
             while (loop)
@@ -862,12 +873,14 @@ namespace Assignment2
                 {
                     loop = false;
 
-                    screen.screenNum = screenList[selection - 1].screenNum;
-                    screen.capacity = screenList[selection - 1].capacity;
+                    film.title = filmList[selection - 1].title;
+                    film.ageRating = filmList[selection - 1].ageRating;
+                    film.duration = filmList[selection - 1].duration;
+                    film.trailer = filmList[selection - 1].trailer;
                 }
             }
 
-            String showings = getData("showings/" + screen.screenNum);
+            String showings = getData("showing/" + film.title);
 
             data = JsonConvert.DeserializeObject<dynamic>(showings);
 
@@ -886,13 +899,13 @@ namespace Assignment2
 
             Console.Clear();
             Console.WriteLine("------------------------------");
-            Console.WriteLine("Screen " + screenList[selection-1].screenNum + " showings");
+            Console.WriteLine(filmList[selection-1].title + " showings");
             Console.WriteLine("------------------------------");
             Console.WriteLine("Please choose a showing to delete:");
             count = showList.Count;
             for (int i = 0; i < count; i++)
             {
-                Console.WriteLine(i + 1 + ". " + showList[i].title + " - " + showList[i].dateTime);
+                Console.WriteLine(i + 1 + ". " + showList[i].dateTime);
             }
 
             loop = true;
@@ -943,7 +956,8 @@ namespace Assignment2
                 }
             }
 
-            deleteData("showings/" + screen.screenNum + "/" + showing.dateTime);
+            deleteData("showing/" + film.title + "/" + showing.dateTime);
+            deleteData("showings/" + showing.screenNum + "/" + showing.dateTime);
 
             Console.WriteLine("Showing deleted successfully.");
             Console.WriteLine("Please press any key to return to the main menu.");
