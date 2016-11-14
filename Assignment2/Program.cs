@@ -463,6 +463,7 @@ namespace Assignment2
             {
                 Console.WriteLine(i + 1 + ". " + filmList[i].title);
             }
+            Console.WriteLine(count + 1 + ". Exit to main menu");
 
             int selection;
             Boolean parse, loop = true;
@@ -478,6 +479,10 @@ namespace Assignment2
 
             while (loop)
             {
+                if (selection == count + 1)
+                {
+                    return;
+                }
                 if (parse == false || selection > count || selection < 1)
                 {
                     Console.WriteLine("Please enter a valid choice:");
@@ -485,33 +490,27 @@ namespace Assignment2
                 }
                 else
                 {
-                    loop = false;
+                    String showing = getData("showing/" + filmList[selection - 1].title);
+                    if (showing != "null")
+                    {
+                        Console.WriteLine("The selected film has existing showings. Film cannot be deleted.");
+                        Console.WriteLine("Please select another option.");
+                        parse = int.TryParse(Console.ReadLine(), out selection);
+                    }
+                    else
+                    {
+                        loop = false;
 
-                    film.title = filmList[selection - 1].title;
-                    film.ageRating = filmList[selection - 1].ageRating;
-                    film.duration = filmList[selection - 1].duration;
-                    film.trailer = filmList[selection - 1].trailer;
-
-                    Console.WriteLine("You have chosen a film with the following details:");
-                    Console.WriteLine("Title: " + film.title);
-                    Console.WriteLine("Age rating: " + film.ageRating);
-                    Console.WriteLine("Duration: " + film.duration + " minutes");
-                    Console.WriteLine("Short description: " + film.trailer);
+                        film.title = filmList[selection - 1].title;
+                        film.ageRating = filmList[selection - 1].ageRating;
+                        film.duration = filmList[selection - 1].duration;
+                        film.trailer = filmList[selection - 1].trailer;
+                    }
                 }
             }
+            deleteData("films/" + film.title);
 
-            String showing = getData("showing/" + film.title);
-
-            if (showing == null)
-            {
-                deleteData("films/" + film.title);
-
-                Console.WriteLine("Film " + film.title + " has been deleted.");
-            }
-            else
-            {
-                Console.WriteLine("The selected film has existing showings. Film cannot be deleted.");
-            }
+            Console.WriteLine("Film " + film.title + " has been deleted.");
             Console.WriteLine("Press any key to return to the main menu.");
             Console.ReadKey();
         }
@@ -655,12 +654,6 @@ namespace Assignment2
                     film.ageRating = filmList[selection - 1].ageRating;
                     film.duration = filmList[selection - 1].duration;
                     film.trailer = filmList[selection - 1].trailer;
-
-                    //Console.WriteLine("You have chosen a film with the following details:");
-                    //Console.WriteLine("Title: " + film.title);
-                    //Console.WriteLine("Age rating: " + film.ageRating);
-                    //Console.WriteLine("Duration: " + film.duration + " minutes");
-                    //Console.WriteLine("Short description: " + film.trailer);
                 }
             }
 
