@@ -336,6 +336,14 @@ namespace Assignment2
 
                     Screen screen = JsonConvert.DeserializeObject<Screen>(response);
                     int purchase = screen.capacity - showing.ticketsPurchased;
+
+                    if (purchase == 0)
+                    {
+                        Console.WriteLine("There are no tickets available for purchase.");
+                        Console.WriteLine("Press any key to return to the main menu.");
+                        Console.ReadKey();
+                        return;
+                    }
                     Console.WriteLine("Available tickets for purchase: " + purchase);
 
                     Console.WriteLine("Please choose the number of tickets to purchase:");
@@ -588,6 +596,7 @@ namespace Assignment2
                                     Console.WriteLine("Screen " + screenNum + " with a capacity of " + capacity + " has been successfully added.");
                                     Console.WriteLine("Please press any key to return to the main menu.");
                                     Console.ReadKey();
+                                    return;
                                 }
                             }
                         }
