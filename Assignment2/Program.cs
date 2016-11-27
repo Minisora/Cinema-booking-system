@@ -395,7 +395,7 @@ namespace Assignment2
 
                             DateTimeFormatInfo format = new DateTimeFormatInfo();
                             format.DateSeparator = "-";
-                            String datetime = String.Format(format, "{0:dd/MMM/yy HH:mm:ss tt}", showing.dateTime);
+                            String datetime = String.Format(format, "{0:dd/MMM/yy h:mm:ss tt}", showing.dateTime);
                             Console.Clear();
                             Console.WriteLine("-------------------------------------");
                             Console.WriteLine(title + " " + datetime);
@@ -515,12 +515,24 @@ namespace Assignment2
 
                     DateTimeFormatInfo formatInfo = new DateTimeFormatInfo();
                     formatInfo.DateSeparator = "-";
-                    String dateTime = String.Format(formatInfo, "{0:dd/MMM/yy HH:mm:ss tt}", showing.dateTime);
+                    String dateTime = String.Format(formatInfo, "{0:dd/MMM/yy h:mm:ss tt}", showing.dateTime);
                     //update tickets purchased          
                     setData("showings/" + showing.screenNum + "/" + dateTime, showing);
                     setData("showing/" + showing.title + "/" + dateTime, showing);
 
+                    //create ticket ID and info
+                    Ticket ticket = new Ticket();
+                    ticket.movie = showing.title;
+                    ticket.dateTime = showing.dateTime;
+                    ticket.studentNumber = student;
+                    ticket.childNumber = child;
+                    ticket.adultNumber = adult;
+                    String res = pushData("tickets", ticket);
+                    TicketID ticketID = new TicketID();
+                    ticketID = JsonConvert.DeserializeObject<TicketID>(res);
+
                     Console.WriteLine((student + child + adult) + " tickets purchased for " + showing.title + " on " + dateTime);
+                    Console.WriteLine("Your ticket ID is: " + ticketID.name);
 
                     Console.WriteLine("Press any key to return to the main menu.");
                     Console.ReadKey();
@@ -570,7 +582,7 @@ namespace Assignment2
                             durationLoop = false;
                         }
                     }
-                    
+
                     Console.WriteLine("Please enter a short trailer description for the new film:");
                     String trailer = Console.ReadLine();
 
@@ -685,18 +697,18 @@ namespace Assignment2
             int count = screenList.Count;
             for (int i = 0; i < count; i++)
             {
-                if ((i+1) != count)
+                if ((i + 1) != count)
                 {
                     Console.Write(screenList[i].screenNum + ", ");
                 }
                 else
                 {
                     Console.Write(screenList[i].screenNum + "\n");
-                }               
+                }
             }
             Console.WriteLine("Enter the new screen number:");
             int screenNum;
-            Boolean parse; 
+            Boolean parse;
             parse = int.TryParse(Console.ReadLine(), out screenNum);
 
             do
@@ -772,9 +784,9 @@ namespace Assignment2
             Console.WriteLine("------------------------------");
             Console.WriteLine("Please choose a film to create a showing:");
             int count = filmList.Count;
-            for (int i=0; i<count; i++)
+            for (int i = 0; i < count; i++)
             {
-                Console.WriteLine(i+1 + ". " + filmList[i].title);
+                Console.WriteLine(i + 1 + ". " + filmList[i].title);
             }
             Console.WriteLine(count + 1 + ". Exit to main menu");
 
@@ -822,7 +834,7 @@ namespace Assignment2
             parse = false;
             loop = true;
 
-            String[] formats = 
+            String[] formats =
             { "d/M/yyyy HHmm",
               "dd/M/yyyy HHmm",
               "d/MM/yyyy HHmm",
@@ -850,7 +862,7 @@ namespace Assignment2
                     loop = false;
                     DateTimeFormatInfo formatInfo = new DateTimeFormatInfo();
                     formatInfo.DateSeparator = "-";
-                    datetime = String.Format(formatInfo, "{0:dd/MMM/yy HH:mm:ss tt}", dateTime);
+                    datetime = String.Format(formatInfo, "{0:dd/MMM/yy h:mm:ss tt}", dateTime);
                     Console.WriteLine(datetime);
                 }
             }
@@ -899,7 +911,7 @@ namespace Assignment2
                         {
                             screenCheck = true;
                             screenLoop = false;
-                            
+
                         }
                     }
 
@@ -925,11 +937,11 @@ namespace Assignment2
                 {
                     showList.Add(JsonConvert.DeserializeObject<Showing>(((JProperty)itemDynamic).Value.ToString()));
                 }
-            } 
+            }
 
             Boolean check = true;
 
-            for (int i=0; i<showList.Count; i++)
+            for (int i = 0; i < showList.Count; i++)
             {
                 DateTime dTime = showList[i].dateTime;
                 int duration = showList[i].duration;
@@ -1031,7 +1043,7 @@ namespace Assignment2
                 }
                 else
                 {
-                    String showings = getData("showing/" + filmList[selection-1].title);
+                    String showings = getData("showing/" + filmList[selection - 1].title);
 
                     data = JsonConvert.DeserializeObject<dynamic>(showings);
 
@@ -1049,7 +1061,7 @@ namespace Assignment2
                         film.ageRating = filmList[selection - 1].ageRating;
                         film.duration = filmList[selection - 1].duration;
                         film.trailer = filmList[selection - 1].trailer;
-                    }                 
+                    }
                 }
             }
 
@@ -1061,7 +1073,7 @@ namespace Assignment2
 
             Console.Clear();
             Console.WriteLine("------------------------------");
-            Console.WriteLine(filmList[selection-1].title + " showings");
+            Console.WriteLine(filmList[selection - 1].title + " showings");
             Console.WriteLine("------------------------------");
             Console.WriteLine("Please choose a showing to delete:");
             count = showList.Count;
@@ -1118,7 +1130,7 @@ namespace Assignment2
                         Console.WriteLine("Title: " + showing.title);
                         Console.WriteLine("Screen number: " + showing.screenNum);
                         Console.WriteLine("Tickets purchased: " + showing.ticketsPurchased);
-                    }           
+                    }
                 }
             }
 
@@ -1142,9 +1154,10 @@ namespace Assignment2
             SetResponse response = client.Set(path, obj);
         }
 
-        public static void pushData(String path, Object obj)
+        public static String pushData(String path, Object obj)
         {
             PushResponse response = client.Push(path, obj);
+            return response.Body;
         }
 
         public static void deleteData(String path)
