@@ -844,7 +844,7 @@ namespace Assignment2
                 else
                 {
                     loop = false;
-                    String.Format("{0:dd-MM-yyyy HHmm}", dateTime);
+                    String.Format("{0:dd'-'MM'-'yyyy HHmm}", dateTime);
                     Console.WriteLine(dateTime);
                 }
             }
