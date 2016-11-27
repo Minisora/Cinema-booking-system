@@ -393,9 +393,12 @@ namespace Assignment2
                                 return;
                             }
 
+                            DateTimeFormatInfo format = new DateTimeFormatInfo();
+                            format.DateSeparator = "-";
+                            String datetime = String.Format(format, "{0:dd/MMM/yyyy HH:mm:ss tt}", showing.dateTime);
                             Console.Clear();
                             Console.WriteLine("-------------------------------------");
-                            Console.WriteLine(title + " " + showing.dateTime);
+                            Console.WriteLine(title + " " + datetime);
                             Console.WriteLine("-------------------------------------");
 
                             Console.WriteLine("Please choose the number of student tickets to purchase: (" + available + " tickets available, RM 10.00 each))");
@@ -510,12 +513,12 @@ namespace Assignment2
                         Console.SetCursorPosition(0, Console.CursorTop - 1);
                     }
 
+                    DateTimeFormatInfo formatInfo = new DateTimeFormatInfo();
+                    formatInfo.DateSeparator = "-";
+                    String dateTime = String.Format(formatInfo, "{0:dd/MMM/yyyy HH:mm:ss tt}", showing.dateTime);
                     //update tickets purchased          
-                    setData("showings/" + showing.screenNum + "/" + showing.dateTime, showing);
-                    setData("showing/" + showing.title + "/" + showing.dateTime, showing);
-
-                    String dateTime = showing.dateTime.ToString();
-                    String.Format("{0:dd/MM/yyyy HHmm}", dateTime);
+                    setData("showings/" + showing.screenNum + "/" + dateTime, showing);
+                    setData("showing/" + showing.title + "/" + dateTime, showing);
 
                     Console.WriteLine((student + child + adult) + " tickets purchased for " + showing.title + " on " + dateTime);
 
@@ -829,6 +832,7 @@ namespace Assignment2
               "d/MM/yy HHmm",
               "dd/MM/yy HHmm" };
 
+            String datetime = "";
             CultureInfo provider = CultureInfo.InvariantCulture;
 
             parse = DateTime.TryParseExact(date, formats, provider, DateTimeStyles.AllowWhiteSpaces, out dateTime);
@@ -846,8 +850,8 @@ namespace Assignment2
                     loop = false;
                     DateTimeFormatInfo formatInfo = new DateTimeFormatInfo();
                     formatInfo.DateSeparator = "-";
-                    String.Format(formatInfo, "{0:dd/MMM/yyyy HHmm}", dateTime);
-                    Console.WriteLine(dateTime);
+                    datetime = String.Format(formatInfo, "{0:dd/MMM/yyyy HH:mm:ss tt}", dateTime);
+                    Console.WriteLine(datetime);
                 }
             }
 
@@ -964,8 +968,8 @@ namespace Assignment2
                     ticketsPurchased = 0
                 };
 
-                setData("showings/" + screenNum + "/" + showing.dateTime, showing);
-                setData("showing/" + showing.title + "/" + showing.dateTime, showing);
+                setData("showings/" + screenNum + "/" + datetime, showing);
+                setData("showing/" + showing.title + "/" + datetime, showing);
                 Console.WriteLine("Showing for " + film.title + " added.");
                 Console.WriteLine("Please press any key to return to the main menu.");
                 Console.ReadKey();
