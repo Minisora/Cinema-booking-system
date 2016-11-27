@@ -143,7 +143,8 @@ namespace Assignment2
                 Console.WriteLine("Customer Main Menu");
                 Console.WriteLine("------------------------------");
                 Console.WriteLine("1. Purchase advance ticket");
-                Console.WriteLine("2. Logout");
+                Console.WriteLine("2. View purchased tickets");
+                Console.WriteLine("3. Logout");
                 Console.WriteLine("Please enter a selection:");
                 String selection = Console.ReadLine();
 
@@ -157,6 +158,11 @@ namespace Assignment2
                             break;
 
                         case "2":
+                            selectionLoop = false;
+                            listTickets();
+                            break;
+
+                        case "3":
                             return;
 
                         default:
@@ -531,11 +537,96 @@ namespace Assignment2
                     TicketID ticketID = new TicketID();
                     ticketID = JsonConvert.DeserializeObject<TicketID>(res);
 
+                    ticket.id = ticketID.name;
+                    setData("tickets/" + user.username + "/" + ticketID.name, ticket);
+
                     Console.WriteLine((student + child + adult) + " tickets purchased for " + showing.title + " on " + dateTime);
                     Console.WriteLine("Your ticket ID is: " + ticketID.name);
 
                     Console.WriteLine("Press any key to return to the main menu.");
                     Console.ReadKey();
+                }
+            }
+        }
+
+        public static void listTickets()
+        {
+            String ticketIDs = getData("tickets/" + user.username);
+
+            if (ticketIDs.Equals(null) || ticketIDs == "null")
+            {
+                Console.WriteLine("You have not purchased any tickets.");
+                Console.WriteLine("Press any key to return to the main menu.");
+                Console.ReadKey();
+                return;
+            }
+
+            dynamic data = JsonConvert.DeserializeObject<dynamic>(ticketIDs);
+            var ticketList = new List<Ticket>();
+            foreach (var itemDynamic in data)
+            {
+                string test = (((JProperty)itemDynamic).Value.ToString());
+                ticketList.Add(JsonConvert.DeserializeObject<Ticket>(((JProperty)itemDynamic).Value.ToString()));
+            }
+
+            Console.Clear();
+            Console.WriteLine("------------------------------");
+            Console.WriteLine("Purchased Tickets");
+            Console.WriteLine("------------------------------");
+            Console.WriteLine("Please select a ticket ID:");
+            int count = ticketList.Count;
+            for (int i = 0; i < count; i++)
+            {
+                Console.WriteLine(i + 1 + ". " + ticketList[i].id);
+            }
+            Console.WriteLine(count + 1 + ". Exit to main menu");
+
+            int selection;
+            Boolean parse, loop = true;
+            parse = int.TryParse(Console.ReadLine(), out selection);
+
+            while (loop)
+            {
+                if (selection == count + 1)
+                {
+                    return;
+                }
+                if (parse == false || selection > count || selection < 1)
+                {
+                    Console.WriteLine("Please enter a valid choice:");
+                    parse = int.TryParse(Console.ReadLine(), out selection);
+                }
+                else
+                {
+                    loop = false;
+
+                    DateTimeFormatInfo formatInfo = new DateTimeFormatInfo();
+                    formatInfo.DateSeparator = "-";
+                    String dateTime = String.Format(formatInfo, "{0:dd/MMM/yy h:mm:ss tt}", ticketList[selection - 1].dateTime);
+
+                    Console.Clear();
+                    Console.WriteLine("------------------------------");
+                    Console.WriteLine("Ticket Information");
+                    Console.WriteLine("------------------------------");
+                    Console.WriteLine("Ticket ID: " + ticketList[selection - 1].id);
+                    Console.WriteLine("Movie: " + ticketList[selection - 1].movie);
+                    Console.WriteLine("Date and time: " + dateTime);
+
+                    if (ticketList[selection - 1].studentNumber != 0)
+                    {
+                        Console.WriteLine("Student tickets purchased: " + ticketList[selection - 1].studentNumber);
+                    }
+                    if (ticketList[selection - 1].childNumber != 0)
+                    {
+                        Console.WriteLine("Child tickets purchased: " + ticketList[selection - 1].childNumber);
+                    }
+                    if (ticketList[selection - 1].adultNumber != 0)
+                    {
+                        Console.WriteLine("Adult tickets purchased: " + ticketList[selection - 1].adultNumber);
+                    }
+
+                    Console.WriteLine("\nPress any key to return to the main menu.");
+                    Console.ReadKey();                  
                 }
             }
         }

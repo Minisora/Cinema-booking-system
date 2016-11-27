@@ -8,6 +8,7 @@ namespace Assignment2
 {
     class Ticket
     {
+        public String id;
         public String movie;
         public DateTime dateTime;
         public int childNumber;
