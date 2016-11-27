@@ -527,7 +527,7 @@ namespace Assignment2
                     ticket.studentNumber = student;
                     ticket.childNumber = child;
                     ticket.adultNumber = adult;
-                    String res = pushData("tickets", ticket);
+                    String res = pushData("tickets/" + user.username, ticket);
                     TicketID ticketID = new TicketID();
                     ticketID = JsonConvert.DeserializeObject<TicketID>(res);
 
