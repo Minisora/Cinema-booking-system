@@ -361,7 +361,7 @@ namespace Assignment2
                             Console.WriteLine(title + " " + showing.dateTime);
                             Console.WriteLine("-------------------------------------");
 
-                            Console.WriteLine("Please choose the number of student tickets to purchase: (" + available + " tickets available)");
+                            Console.WriteLine("Please choose the number of student tickets to purchase: (" + available + " tickets available, RM 10.00 each))");
                             parse = int.TryParse(Console.ReadLine(), out selection);
 
                             while (loop2)
@@ -382,7 +382,7 @@ namespace Assignment2
 
                             loop2 = true;
 
-                            Console.WriteLine("Please choose the number of child tickets to purchase: (" + available + " tickets available)");
+                            Console.WriteLine("Please choose the number of child tickets to purchase: (" + available + " tickets available, RM 8.00 each)");
                             parse = int.TryParse(Console.ReadLine(), out selection);
 
                             while (loop2)
@@ -403,7 +403,7 @@ namespace Assignment2
 
                             loop2 = true;
 
-                            Console.WriteLine("Please choose the number of adult tickets to purchase: (" + available + " tickets available)");
+                            Console.WriteLine("Please choose the number of adult tickets to purchase: (" + available + " tickets available, RM 13.00 each))");
                             parse = int.TryParse(Console.ReadLine(), out selection);
 
                             while (loop2)
@@ -438,21 +438,23 @@ namespace Assignment2
 
                     if (student > 0)
                     {
-                        Console.WriteLine("Student tickets purchased: " + student);
+                        Console.WriteLine("Student tickets purchased:\t" + student + "\tx RM  8.00 = RM " + (student * 8) + ".00");
                     }
 
                     if (child > 0)
                     {
-                        Console.WriteLine("Child tickets purchased: " + child);
+                        Console.WriteLine("Child tickets purchased:\t" + child + "\tx RM 10.00 = RM " + (child * 10) + ".00");
                     }
 
                     if (adult > 0)
                     {
-                        Console.WriteLine("Adult tickets purchased: " + adult);
+                        Console.WriteLine("Adult tickets purchased:\t" + adult + "\tx RM 13.00 = RM " + (adult * 13) + ".00");
                     }
+                    Console.WriteLine("-------------------------------------------------------------");
+                    Console.WriteLine("Total price:\t\t\t\t\t     RM " + ((student * 8) + (child * 10) + (adult * 13)) + ".00");
 
                     loop = true;
-                    Console.WriteLine("Please confirm that you have chosen the correct amount of tickets. Press enter to puchase tickets, any other key to cancel.");
+                    Console.WriteLine("Please confirm that you have chosen the correct amount of tickets. Press enter to puchase tickets, escape to cancel.");
 
                     while (loop)
                     {
