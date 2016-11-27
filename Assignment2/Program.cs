@@ -28,21 +28,54 @@ namespace Assignment2
 
         static void Main(string[] args)
         {
-            login();
+            Boolean selectionLoop = true, startingLoop = true;
 
-            switch (user.type)
+            while (startingLoop)
             {
-                case "customer":
-                    customerMain();
-                    break;
+                selectionLoop = true;
+                Console.Clear();
 
-                case "clerk":
-                    clerkMain();
-                    break;
+                Console.WriteLine("------------------------------");
+                Console.WriteLine("GSC Ticketing System");
+                Console.WriteLine("------------------------------");
+                Console.WriteLine("1. Login");
+                Console.WriteLine("2. Exit");
+                Console.WriteLine("Please enter a selection:");
+                String selection = Console.ReadLine();
 
-                case "manager":
-                    managerMain();
-                    break;
+                while (selectionLoop)
+                {
+                    switch (selection)
+                    {
+                        case "1":
+                            selectionLoop = false;
+                            login();
+                            break;
+
+                        case "2":
+                            return;
+
+                        default:
+                            Console.WriteLine("Invalid input, please enter a valid choice.");
+                            selection = Console.ReadLine();
+                            break;
+                    }
+                }
+
+                switch (user.type)
+                {
+                    case "customer":
+                        customerMain();
+                        break;
+
+                    case "clerk":
+                        clerkMain();
+                        break;
+
+                    case "manager":
+                        managerMain();
+                        break;
+                }
             }
         }
 
@@ -51,7 +84,11 @@ namespace Assignment2
             String username, password;
             Boolean usernameLoop = true, passwordLoop = true;
 
-            Console.WriteLine("Welcome to the GSC Cinema Booking System.");
+            Console.Clear();
+
+            Console.WriteLine("------------------------------");
+            Console.WriteLine("System Login");
+            Console.WriteLine("------------------------------");
             Console.WriteLine("Please enter your username:");
             username = Console.ReadLine();
 
@@ -106,7 +143,7 @@ namespace Assignment2
                 Console.WriteLine("Customer Main Menu");
                 Console.WriteLine("------------------------------");
                 Console.WriteLine("1. Purchase advance ticket");
-                Console.WriteLine("2. Exit");
+                Console.WriteLine("2. Logout");
                 Console.WriteLine("Please enter a selection:");
                 String selection = Console.ReadLine();
 
@@ -144,7 +181,7 @@ namespace Assignment2
                 Console.WriteLine("Clerk Main Menu");
                 Console.WriteLine("------------------------------");
                 Console.WriteLine("1. Purchase tickets");
-                Console.WriteLine("2. Exit");
+                Console.WriteLine("2. Logout");
                 Console.WriteLine("Please enter a selection:");
                 String selection = Console.ReadLine();
 
@@ -186,7 +223,7 @@ namespace Assignment2
                 Console.WriteLine("3. Add screen");
                 Console.WriteLine("4. Add showing");
                 Console.WriteLine("5. Cancel showing");
-                Console.WriteLine("6. Exit");
+                Console.WriteLine("6. Logout");
                 Console.WriteLine("Please enter a selection:");
                 String selection = Console.ReadLine();
 
