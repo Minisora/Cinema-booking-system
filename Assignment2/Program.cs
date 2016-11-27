@@ -253,6 +253,7 @@ namespace Assignment2
             {
                 Console.WriteLine(i + 1 + ". " + filmList[i].title);
             }
+            Console.WriteLine(count + 1 + ". Exit to main menu");
 
             int selection;
             Boolean parse, loop = true;
@@ -260,6 +261,10 @@ namespace Assignment2
 
             while (loop)
             {
+                if (selection == count + 1)
+                {
+                    return;
+                }
                 if (parse == false || selection > count || selection < 1)
                 {
                     Console.WriteLine("Please enter a valid choice:");
@@ -267,115 +272,218 @@ namespace Assignment2
                 }
                 else
                 {
-                    loop = false;
                     title = filmList[selection - 1].title;
                 }
-            }
 
-            String showings = getData("showing/" + title);
+                String showings = getData("showing/" + title);
 
-            data = JsonConvert.DeserializeObject<dynamic>(showings);
+                data = JsonConvert.DeserializeObject<dynamic>(showings);
 
-            if (data == null)
-            {
-                Console.WriteLine("There are no showings for " + title + ".");
-                Console.WriteLine("Press any key to return to the main menu.");
-                Console.ReadKey();
-                return;
-            }
-            var showingList = new List<Showing>();
-            foreach (var itemDynamic in data)
-            {
-                showingList.Add(JsonConvert.DeserializeObject<Showing>(((JProperty)itemDynamic).Value.ToString()));
-            }
-
-            count = showingList.Count;
-            Console.Clear();
-
-            Console.WriteLine("------------------------------");
-            Console.WriteLine("Showings for " + title);
-            Console.WriteLine("------------------------------");
-            Console.WriteLine("Please choose a showing:");
-            
-            for (int i = 0; i < count; i++)
-            {
-                Console.WriteLine(i + 1 + ". " + showingList[i].dateTime);
-            }
-
-            loop = true;
-            parse = int.TryParse(Console.ReadLine(), out selection);
-
-            Showing showing = new Showing
-            {
-                dateTime = new DateTime(),
-                duration = 0,
-                title = "",
-                screenNum = 0,
-                ticketsPurchased = 0
-            };
-
-            while (loop)
-            {
-                if (parse == false || selection > count || selection < 1)
+                if (data == null)
                 {
-                    Console.WriteLine("Please enter a valid choice:");
+                    Console.WriteLine("There are no showings for " + title + ".");
+                    Console.WriteLine("Press select another option.");
                     parse = int.TryParse(Console.ReadLine(), out selection);
                 }
                 else
                 {
                     loop = false;
-                    Boolean loop2 = true;
-
-                    showing.dateTime = showingList[selection - 1].dateTime;
-                    showing.duration = showingList[selection - 1].duration;
-                    showing.title = showingList[selection - 1].title;
-                    showing.screenNum = showingList[selection - 1].screenNum;
-                    showing.ticketsPurchased = showingList[selection - 1].ticketsPurchased;
-
-                    String response = getData("screens/" + showing.screenNum.ToString());
-
-                    Screen screen = JsonConvert.DeserializeObject<Screen>(response);
-                    int purchase = screen.capacity - showing.ticketsPurchased;
-
-                    if (purchase == 0)
+                    var showingList = new List<Showing>();
+                    foreach (var itemDynamic in data)
                     {
-                        Console.WriteLine("There are no tickets available for purchase.");
-                        Console.WriteLine("Press any key to return to the main menu.");
-                        Console.ReadKey();
-                        return;
+                        showingList.Add(JsonConvert.DeserializeObject<Showing>(((JProperty)itemDynamic).Value.ToString()));
                     }
-                    Console.WriteLine("Available tickets for purchase: " + purchase);
 
-                    Console.WriteLine("Please choose the number of tickets to purchase:");
+                    count = showingList.Count;
+                    Console.Clear();
+
+                    Console.WriteLine("------------------------------");
+                    Console.WriteLine("Showings for " + title);
+                    Console.WriteLine("------------------------------");
+                    Console.WriteLine("Please choose a showing:");
+
+                    for (int i = 0; i < count; i++)
+                    {
+                        Console.WriteLine(i + 1 + ". " + showingList[i].dateTime);
+                    }
+                    Console.WriteLine(count + 1 + ". Exit to main menu");
+
+                    loop = true;
                     parse = int.TryParse(Console.ReadLine(), out selection);
 
-                    while (loop2)
+                    Showing showing = new Showing
                     {
-                        if (parse == false || selection < 1 || selection > purchase)
+                        dateTime = new DateTime(),
+                        duration = 0,
+                        title = "",
+                        screenNum = 0,
+                        ticketsPurchased = 0
+                    };
+
+                    int student = 0, child = 0, adult = 0;
+                    while (loop)
+                    {
+                        if (selection == count + 1)
                         {
-                            Console.WriteLine("Please enter a valid number:");
+                            return;
+                        }
+                        if (parse == false || selection > count || selection < 1)
+                        {
+                            Console.WriteLine("Please enter a valid choice:");
                             parse = int.TryParse(Console.ReadLine(), out selection);
                         }
                         else
                         {
-                            loop2 = false;
-                            showing.ticketsPurchased += selection;
+                            loop = false;
+                            Boolean loop2 = true;
+
+                            showing.dateTime = showingList[selection - 1].dateTime;
+                            showing.duration = showingList[selection - 1].duration;
+                            showing.title = showingList[selection - 1].title;
+                            showing.screenNum = showingList[selection - 1].screenNum;
+                            showing.ticketsPurchased = showingList[selection - 1].ticketsPurchased;
+
+                            String response = getData("screens/" + showing.screenNum.ToString());
+
+                            Screen screen = JsonConvert.DeserializeObject<Screen>(response);
+                            int available = screen.capacity - showing.ticketsPurchased;
+
+                            if (available == 0)
+                            {
+                                Console.WriteLine("There are no tickets available for purchase.");
+                                Console.WriteLine("Press any key to return to the main menu.");
+                                Console.ReadKey();
+                                return;
+                            }
+
+                            Console.Clear();
+                            Console.WriteLine("-------------------------------------");
+                            Console.WriteLine(title + " " + showing.dateTime);
+                            Console.WriteLine("-------------------------------------");
+
+                            Console.WriteLine("Please choose the number of student tickets to purchase: (" + available + " tickets available)");
+                            parse = int.TryParse(Console.ReadLine(), out selection);
+
+                            while (loop2)
+                            {
+                                if (parse == false || selection < 0 || selection > available)
+                                {
+                                    Console.WriteLine("Please enter a valid number:");
+                                    parse = int.TryParse(Console.ReadLine(), out selection);
+                                }
+                                else
+                                {
+                                    loop2 = false;
+                                    showing.ticketsPurchased += selection;
+                                    available -= selection;
+                                    student = selection;
+                                }
+                            }
+
+                            loop2 = true;
+
+                            Console.WriteLine("Please choose the number of child tickets to purchase: (" + available + " tickets available)");
+                            parse = int.TryParse(Console.ReadLine(), out selection);
+
+                            while (loop2)
+                            {
+                                if (parse == false || selection < 0 || selection > available)
+                                {
+                                    Console.WriteLine("Please enter a valid number:");
+                                    parse = int.TryParse(Console.ReadLine(), out selection);
+                                }
+                                else
+                                {
+                                    loop2 = false;
+                                    showing.ticketsPurchased += selection;
+                                    available -= selection;
+                                    child = selection;
+                                }
+                            }
+
+                            loop2 = true;
+
+                            Console.WriteLine("Please choose the number of adult tickets to purchase: (" + available + " tickets available)");
+                            parse = int.TryParse(Console.ReadLine(), out selection);
+
+                            while (loop2)
+                            {
+                                if (parse == false || selection < 0 || selection > available)
+                                {
+                                    Console.WriteLine("Please enter a valid number:");
+                                    parse = int.TryParse(Console.ReadLine(), out selection);
+                                }
+                                else
+                                {
+                                    loop2 = false;
+                                    showing.ticketsPurchased += selection;
+                                    available -= selection;
+                                    adult = selection;
+                                }
+                            }
                         }
                     }
+
+                    if ((student + child + adult) == 0)
+                    {
+                        Console.WriteLine("You did not purchase any tickets. Please press any key to return to the main menu.");
+                        Console.ReadKey();
+                        return;
+                    }
+
+                    Console.Clear();
+                    Console.WriteLine("------------------------------");
+                    Console.WriteLine("Tickets purchased");
+                    Console.WriteLine("------------------------------");
+
+                    if (student > 0)
+                    {
+                        Console.WriteLine("Student tickets purchased: " + student);
+                    }
+
+                    if (child > 0)
+                    {
+                        Console.WriteLine("Child tickets purchased: " + child);
+                    }
+
+                    if (adult > 0)
+                    {
+                        Console.WriteLine("Adult tickets purchased: " + adult);
+                    }
+
+                    loop = true;
+                    Console.WriteLine("Please confirm that you have chosen the correct amount of tickets. Press enter to puchase tickets, any other key to cancel.");
+
+                    while (loop)
+                    {
+                        ConsoleKey key = Console.ReadKey().Key;
+                        if (key.Equals(ConsoleKey.Escape))
+                        {
+                            return;
+                        }
+                        if (key.Equals(ConsoleKey.Enter))
+                        {
+                            loop = false;
+                            Console.WriteLine("Purchasing tickets...");
+                        }
+                        Console.SetCursorPosition(0, Console.CursorTop);
+                        Console.Write(new string(' ', Console.WindowWidth));
+                        Console.SetCursorPosition(0, Console.CursorTop - 1);
+                    }
+
+                    //update tickets purchased          
+                    setData("showings/" + showing.screenNum + "/" + showing.dateTime, showing);
+                    setData("showing/" + showing.title + "/" + showing.dateTime, showing);
+
+                    String dateTime = showing.dateTime.ToString();
+                    String.Format("{0:dd/MM/yyyy HHmm}", dateTime);
+
+                    Console.WriteLine((student + child + adult) + " tickets purchased for " + showing.title + " on " + dateTime);
+
+                    Console.WriteLine("Press any key to return to the main menu.");
+                    Console.ReadKey();
                 }
             }
-
-            //update tickets purchased          
-            setData("showings/" + showing.screenNum + "/" + showing.dateTime, showing);
-            setData("showing/" + showing.title + "/" + showing.dateTime, showing);
-
-            String dateTime = showing.dateTime.ToString();
-            String.Format("{0:dd/MM/yyyy HHmm}", dateTime);
-
-            Console.WriteLine(selection + " tickets purchased for " + showing.title + " on " + dateTime);
-
-            Console.WriteLine("Press any key to return to the main menu.");
-            Console.ReadKey();
         }
 
         public static void addFilm()
@@ -626,6 +734,7 @@ namespace Assignment2
             {
                 Console.WriteLine(i+1 + ". " + filmList[i].title);
             }
+            Console.WriteLine(count + 1 + ". Exit to main menu");
 
             int selection;
             Boolean parse, loop = true;
@@ -641,6 +750,10 @@ namespace Assignment2
 
             while (loop)
             {
+                if (selection == count + 1)
+                {
+                    return;
+                }
                 if (parse == false || selection > count || selection < 1)
                 {
                     Console.WriteLine("Please enter a valid choice:");
@@ -657,6 +770,10 @@ namespace Assignment2
                 }
             }
 
+            Console.Clear();
+            Console.WriteLine("------------------------------");
+            Console.WriteLine("Add Showing for " + film.title);
+            Console.WriteLine("------------------------------");
             Console.WriteLine("Enter a date and time to create a showing for " + film.title + " in the format DD/MM/YYYY hhmm:");
             String date = Console.ReadLine();
             DateTime dateTime;
@@ -772,19 +889,8 @@ namespace Assignment2
                 DateTime dTime = showList[i].dateTime;
                 int duration = showList[i].duration;
 
-                Console.WriteLine(dateTime);
-                Console.WriteLine(dTime);
-                Console.WriteLine("1. " + dateTime.CompareTo(dTime));
-
                 if (dateTime.CompareTo(dTime) == 1) //dateTime is later than dTime
                 {
-                    Console.WriteLine("Later");
-                    Console.WriteLine(duration);
-
-                    Console.WriteLine(dateTime);
-                    Console.WriteLine(dTime.AddMinutes(duration));
-                    Console.WriteLine("2. " + dateTime.CompareTo(dTime.AddMinutes(duration)));
-
                     if (dateTime.CompareTo(dTime.AddMinutes(duration)) == -1 || dateTime.CompareTo(dTime.AddMinutes(duration)) == 0) //dateTime is earlier or same than dTime
                     {
                         check = false;
@@ -826,6 +932,8 @@ namespace Assignment2
             else
             {
                 Console.WriteLine("Invalid time slot.");
+                Console.WriteLine("Please press any key to return to the main menu.");
+                Console.ReadKey();
             }
         }
 
@@ -916,6 +1024,7 @@ namespace Assignment2
             {
                 Console.WriteLine(i + 1 + ". " + showList[i].dateTime);
             }
+            Console.WriteLine(count + 1 + ". Exit to main menu");
 
             loop = true;
             parse = int.TryParse(Console.ReadLine(), out selection);
@@ -931,6 +1040,10 @@ namespace Assignment2
 
             while (loop)
             {
+                if (selection == count + 1)
+                {
+                    return;
+                }
                 if (parse == false || selection > count || selection < 1)
                 {
                     Console.WriteLine("Please enter a valid choice:");
@@ -941,9 +1054,8 @@ namespace Assignment2
                     if (showList[selection - 1].ticketsPurchased > 0)
                     {
                         Console.WriteLine("The selected showing has sold tickets. Unable to delete showing.");
-                        Console.WriteLine("Please press any key to return to the main menu.");
-                        Console.ReadKey();
-                        return;
+                        Console.WriteLine("Please select another option.");
+                        parse = int.TryParse(Console.ReadLine(), out selection);
                     }
                     else
                     {
