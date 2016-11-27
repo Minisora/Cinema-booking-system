@@ -395,7 +395,7 @@ namespace Assignment2
 
                             DateTimeFormatInfo format = new DateTimeFormatInfo();
                             format.DateSeparator = "-";
-                            String datetime = String.Format(format, "{0:dd/MMM/yyyy HH:mm:ss tt}", showing.dateTime);
+                            String datetime = String.Format(format, "{0:dd/MMM/yy HH:mm:ss tt}", showing.dateTime);
                             Console.Clear();
                             Console.WriteLine("-------------------------------------");
                             Console.WriteLine(title + " " + datetime);
@@ -515,7 +515,7 @@ namespace Assignment2
 
                     DateTimeFormatInfo formatInfo = new DateTimeFormatInfo();
                     formatInfo.DateSeparator = "-";
-                    String dateTime = String.Format(formatInfo, "{0:dd/MMM/yyyy HH:mm:ss tt}", showing.dateTime);
+                    String dateTime = String.Format(formatInfo, "{0:dd/MMM/yy HH:mm:ss tt}", showing.dateTime);
                     //update tickets purchased          
                     setData("showings/" + showing.screenNum + "/" + dateTime, showing);
                     setData("showing/" + showing.title + "/" + dateTime, showing);
@@ -850,7 +850,7 @@ namespace Assignment2
                     loop = false;
                     DateTimeFormatInfo formatInfo = new DateTimeFormatInfo();
                     formatInfo.DateSeparator = "-";
-                    datetime = String.Format(formatInfo, "{0:dd/MMM/yyyy HH:mm:ss tt}", dateTime);
+                    datetime = String.Format(formatInfo, "{0:dd/MMM/yy HH:mm:ss tt}", dateTime);
                     Console.WriteLine(datetime);
                 }
             }
