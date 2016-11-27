@@ -846,7 +846,7 @@ namespace Assignment2
                     loop = false;
                     DateTimeFormatInfo formatInfo = new DateTimeFormatInfo();
                     formatInfo.DateSeparator = "-";
-                    String.Format(formatInfo, "{0:dd'-'MMM'-'yyyy HHmm}", dateTime);
+                    String.Format(formatInfo, "{0:dd/MMM/yyyy HHmm}", dateTime);
                     Console.WriteLine(dateTime);
                 }
             }
