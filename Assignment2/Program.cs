@@ -8,6 +8,7 @@ using FireSharp.Response;
 using Newtonsoft.Json.Linq;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using System.ComponentModel.DataAnnotations;
 
 namespace Assignment2
 {
@@ -654,7 +655,7 @@ namespace Assignment2
             }
             
             String cardNumber = Regex.Replace(Console.ReadLine(), @"\s+", "");
-            parse = long.TryParse(cardNumber, out card);
+            parse = long.TryParse(cardNumber, out card);       
 
             while (loop)
             {
