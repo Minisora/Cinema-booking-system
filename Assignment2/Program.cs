@@ -692,7 +692,7 @@ namespace Assignment2
 
             while (loop)
             {
-                if (parse == false)
+                if (parse == false || dateTime.CompareTo(DateTime.Now) < 0)
                 {
                     Console.WriteLine("Please enter a valid date:");
                     expiry = Console.ReadLine();
@@ -1098,7 +1098,7 @@ namespace Assignment2
 
             while (loop)
             {
-                if (parse == false)
+                if (parse == false || dateTime.CompareTo(DateTime.Now) < 0)
                 {
                     Console.WriteLine("Please enter a valid date:");
                     date = Console.ReadLine();
