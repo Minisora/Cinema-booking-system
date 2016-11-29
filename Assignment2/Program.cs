@@ -520,19 +520,20 @@ namespace Assignment2
                                 Console.WriteLine("Total price: RM " + ((student * 8) + (child * 10) + (adult * 13)) + ".00");
                                 Console.WriteLine("Please choose a payment method:");
                                 Console.WriteLine("1. Credit card");
-                                Console.WriteLine("2. Cash");
-                                Console.WriteLine("3. Cancel payment");
+                                Console.WriteLine("2. Payment card");
+                                Console.WriteLine("3. Cash");
+                                Console.WriteLine("4. Cancel payment");
 
                                 Boolean loop2 = true;
                                 parse = int.TryParse(Console.ReadLine(), out selection);
 
                                 while (loop2)
                                 {
-                                    if (selection == 3)
+                                    if (selection == 4)
                                     {
                                         return;
                                     }
-                                    if (parse == false || selection > 2 || selection < 1)
+                                    if (parse == false || selection > 3 || selection < 1)
                                     {
                                         Console.WriteLine("Please enter a valid choice:");
                                         parse = int.TryParse(Console.ReadLine(), out selection);
@@ -540,7 +541,12 @@ namespace Assignment2
                                     else if (selection == 1)
                                     {
                                         loop2 = false;
-                                        payCreditCard(student, child, adult);
+                                        payCreditCard(student, child, adult, 1);
+                                    }
+                                    else if (selection == 2)
+                                    {
+                                        loop2 = false;
+                                        payCreditCard(student, child, adult, 2);
                                     }
                                     else
                                     {
@@ -568,7 +574,7 @@ namespace Assignment2
                             }
                             else
                             {
-                                payCreditCard(student, child, adult);                          
+                                payCreditCard(student, child, adult, 1);                          
                             }
                             Console.WriteLine("Purchasing tickets...");                           
                         }
@@ -607,26 +613,50 @@ namespace Assignment2
             }
         }
 
-        public static void payCreditCard(int student, int child, int adult)
+        public static void payCreditCard(int student, int child, int adult, int type)
         {
             Console.Clear();
             Console.WriteLine("------------------------------");
-            Console.WriteLine("Credit Card Payment");
+            if (type == 1)
+            {
+                Console.WriteLine("Credit Card Payment");
+            }
+            else
+            {
+                Console.WriteLine("Payment Card");
+            }
             Console.WriteLine("------------------------------");
             Console.WriteLine("Total price: RM " + ((student * 8) + (child * 10) + (adult * 13)) + ".00");
-            Console.WriteLine("Please enter the credit card information:");
+
+            if (type == 1)
+            {
+                Console.WriteLine("Please enter the credit card information:");
+            }
+            else
+            {
+                Console.WriteLine("Please enter the payment card information:");
+            }
+            
             Console.Write("Name: ");
             string name = Console.ReadLine();
 
-            Boolean cardLoop = true;
+            Boolean loop = true;
             Boolean parse = false;
             long card = 0;
 
-            Console.Write("Credit card number: ");
+            if (type == 1)
+            {
+                Console.Write("Credit card number: ");
+            }
+            else
+            {
+                Console.Write("Payment card number: ");
+            }
+            
             String cardNumber = Regex.Replace(Console.ReadLine(), @"\s+", "");
             parse = long.TryParse(cardNumber, out card);
 
-            while (cardLoop)
+            while (loop)
             {
                 if (parse == false || cardNumber.Length != 16)
                 {
@@ -636,7 +666,40 @@ namespace Assignment2
                 }
                 else
                 {
-                    cardLoop = false;
+                    loop = false;
+                }
+            }
+
+            Console.Write("Expiry date: (MM/YY)");
+            String expiry = Console.ReadLine();
+
+            String[] formats =
+            { "M/yyyy",
+              "M/yyyy",
+              "MM/yyyy",
+              "MM/yyyy",
+              "M/yy",
+              "M/yy",
+              "MM/yy",
+              "MM/yy" };
+
+            CultureInfo provider = CultureInfo.InvariantCulture;
+            DateTime dateTime = new DateTime();
+
+            parse = DateTime.TryParseExact(expiry, formats, provider, DateTimeStyles.AllowWhiteSpaces, out dateTime);
+            loop = true;
+
+            while (loop)
+            {
+                if (parse == false)
+                {
+                    Console.WriteLine("Please enter a valid date:");
+                    expiry = Console.ReadLine();
+                    parse = DateTime.TryParseExact(expiry, formats, provider, DateTimeStyles.None, out dateTime);
+                }
+                else
+                {
+                    loop = false;
                 }
             }
         }
