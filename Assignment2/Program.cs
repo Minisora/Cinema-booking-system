@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Net.Http;
 using Newtonsoft.Json;
 using FireSharp.Interfaces;
 using FireSharp.Config;
@@ -11,6 +7,7 @@ using FireSharp;
 using FireSharp.Response;
 using Newtonsoft.Json.Linq;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace Assignment2
 {
@@ -500,7 +497,7 @@ namespace Assignment2
                     Console.WriteLine("Total price:\t\t\t\t\t     RM " + ((student * 8) + (child * 10) + (adult * 13)) + ".00");
 
                     loop = true;
-                    Console.WriteLine("Please confirm that you have chosen the correct amount of tickets. Press enter to puchase tickets, escape to cancel.");
+                    Console.WriteLine("Please confirm that you have chosen the correct amount of tickets. Press enter to continue to payment, escape to cancel.");
 
                     while (loop)
                     {
@@ -512,7 +509,68 @@ namespace Assignment2
                         if (key.Equals(ConsoleKey.Enter))
                         {
                             loop = false;
-                            Console.WriteLine("Purchasing tickets...");
+                            //payment method
+
+                            if (user.type.Equals("clerk"))
+                            {
+                                Console.Clear();
+                                Console.WriteLine("------------------------------");
+                                Console.WriteLine("Payment Method");
+                                Console.WriteLine("------------------------------");
+                                Console.WriteLine("Total price: RM " + ((student * 8) + (child * 10) + (adult * 13)) + ".00");
+                                Console.WriteLine("Please choose a payment method:");
+                                Console.WriteLine("1. Credit card");
+                                Console.WriteLine("2. Cash");
+                                Console.WriteLine("3. Cancel payment");
+
+                                Boolean loop2 = true;
+                                parse = int.TryParse(Console.ReadLine(), out selection);
+
+                                while (loop2)
+                                {
+                                    if (selection == 3)
+                                    {
+                                        return;
+                                    }
+                                    if (parse == false || selection > 2 || selection < 1)
+                                    {
+                                        Console.WriteLine("Please enter a valid choice:");
+                                        parse = int.TryParse(Console.ReadLine(), out selection);
+                                    }
+                                    else if (selection == 1)
+                                    {
+                                        loop2 = false;
+                                        payCreditCard(student, child, adult);
+                                    }
+                                    else
+                                    {
+                                        loop2 = false;
+                                        Console.WriteLine("Please press enter to confirm that cash payment has been made. Press escape to cancel.");
+                                        Boolean loop3 = true;
+                                        while (loop3)
+                                        {
+                                            key = Console.ReadKey().Key;
+                                            if (key.Equals(ConsoleKey.Escape))
+                                            {
+                                                return;
+                                            }
+                                            if (key.Equals(ConsoleKey.Enter))
+                                            {
+                                                loop3 = false;
+                                                Console.WriteLine("Cash payment confirmed.");
+                                            }
+                                            Console.SetCursorPosition(0, Console.CursorTop);
+                                            Console.Write(new string(' ', Console.WindowWidth));
+                                            Console.SetCursorPosition(0, Console.CursorTop - 1);
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                payCreditCard(student, child, adult);                          
+                            }
+                            Console.WriteLine("Purchasing tickets...");                           
                         }
                         Console.SetCursorPosition(0, Console.CursorTop);
                         Console.Write(new string(' ', Console.WindowWidth));
@@ -545,6 +603,40 @@ namespace Assignment2
 
                     Console.WriteLine("Press any key to return to the main menu.");
                     Console.ReadKey();
+                }
+            }
+        }
+
+        public static void payCreditCard(int student, int child, int adult)
+        {
+            Console.Clear();
+            Console.WriteLine("------------------------------");
+            Console.WriteLine("Credit Card Payment");
+            Console.WriteLine("------------------------------");
+            Console.WriteLine("Total price: RM " + ((student * 8) + (child * 10) + (adult * 13)) + ".00");
+            Console.WriteLine("Please enter the credit card information:");
+            Console.Write("Name: ");
+            string name = Console.ReadLine();
+
+            Boolean cardLoop = true;
+            Boolean parse = false;
+            long card = 0;
+
+            Console.Write("Credit card number: ");
+            String cardNumber = Regex.Replace(Console.ReadLine(), @"\s+", "");
+            parse = long.TryParse(cardNumber, out card);
+
+            while (cardLoop)
+            {
+                if (parse == false || cardNumber.Length != 16)
+                {
+                    Console.Write("Please enter a valid credit card number: ");
+                    cardNumber = Regex.Replace(Console.ReadLine(), @"\s+", "");
+                    parse = long.TryParse(cardNumber, out card);
+                }
+                else
+                {
+                    cardLoop = false;
                 }
             }
         }
