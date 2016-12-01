@@ -671,7 +671,7 @@ namespace Assignment2
                 }
             }
 
-            Console.Write("Expiry date: (MM/YY)");
+            Console.Write("Expiry date(MM/YY) :");
             String expiry = Console.ReadLine();
 
             String[] formats =
